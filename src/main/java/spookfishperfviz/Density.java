@@ -163,12 +163,12 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 	public String toString() {
 		final String NL = System.lineSeparator();
 
-		String str = "Points on X axis=" + this.columnIntervalPoints + NL + "Points on Y axis=" + this.rowIntervalPoints + NL;
+		StringBuilder str = new StringBuilder("Points on X axis=" + this.columnIntervalPoints + NL + "Points on Y axis=" + this.rowIntervalPoints + NL);
 
 		for (final V[] row : this.matrix) {
-			str += Arrays.deepToString(row) + NL;
+			str.append(Arrays.deepToString(row)).append(NL);
 		}
-		return str;
+		return str.toString();
 	}
 
 	V[][] getMatrix() {

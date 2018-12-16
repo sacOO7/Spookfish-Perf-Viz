@@ -95,15 +95,14 @@ final class Utils {
 
 		final double width = (SVGConstants.LEFT_RIGHT_MARGIN * 2) + (maxLineLength * SVGConstants.MONOSPACE_FONT_WIDTH);
 
-		final StringBuilder buf = new StringBuilder();
-		buf.append("<svg height=\"").append(height).append("\" width=\"").append(width).append("\">").append(NL);
-		buf.append("<rect height=\"").append(height).append("\" width=\"").append(width).append("\" style=\"fill:white;stroke:black;stroke-width:1\"/>").append(NL);
-		buf.append("<g fill=\"black\" style=\"font-family:").append(SVGConstants.MONOSPACE_FONT_FAMILY).append(";font-size:").append(SVGConstants.MONOSPACE_FONT_SIZE).append("px;\">").append(NL);
-		buf.append(texts);
-		buf.append("</g>").append(NL);
-		buf.append("</svg>");
-
-		return buf.toString();
+		String buf =
+				"<svg height=\"" + height + "\" width=\"" + width + "\">" + NL +
+				"<rect height=\"" + height + "\" width=\"" + width + "\" style=\"fill:white;stroke:black;stroke-width:1\"/>" + NL +
+				"<g fill=\"black\" style=\"font-family:" + SVGConstants.MONOSPACE_FONT_FAMILY + ";font-size:" + SVGConstants.MONOSPACE_FONT_SIZE + "px;\">" + NL +
+				texts +
+				"</g>" + NL +
+				"</svg>";
+		return buf;
 	}
 
 	static <T, R, C extends Collection<R>> C forEach(final Collection<T> c, final Function<? super T, R> f, final Supplier<C> s) {

@@ -528,25 +528,23 @@ final class TimeSeriesLatencyDensity {
 				y += heatMapSingleAreaHeight;
 			}
 		}
-		
-		final StringBuilder svg = new StringBuilder();
-		
+
 		// Need to set the width & height of the SVG to prevent clipping of large SVGs.
 		final double svgEndX = heatMapBoxEndX + SVGConstants.LEFT_RIGHT_MARGIN;
 		final double svgEndY = xAxisTitleEndY + SVGConstants.TOP_DOWN_MARGIN;
-		
-		svg.append("<svg width=\"").append(svgEndX).append("\" height=\"").append(svgEndY).append("\">").append(NL);
-		svg.append(xAxisTitleSVG).append(NL);
-		svg.append(xAxisTicksSVG).append(NL);
-		svg.append(xAxisLabelsSVG).append(NL);
-		svg.append(yAxisTitleSVG).append(NL);
-		svg.append(yAxisLabelsSVG).append(NL);
-		svg.append(yAxisTicksSVG).append(NL);
-		svg.append(boxSVG).append(NL);
-		svg.append(colorMapSVG).append(NL);
-		svg.append("</svg>");
-		
-		return new HeatMapSVG(svg.toString(), timeLabelSkipCount, heatMapBoxStartX, heatMapSingleAreaWidth);
+
+		String svg =
+				"<svg width=\"" + svgEndX + "\" height=\"" + svgEndY + "\">" + NL +
+				xAxisTitleSVG + NL +
+				xAxisTicksSVG + NL +
+				xAxisLabelsSVG + NL +
+				yAxisTitleSVG + NL +
+				yAxisLabelsSVG + NL +
+				yAxisTicksSVG + NL +
+				boxSVG + NL +
+				colorMapSVG + NL +
+				"</svg>";
+		return new HeatMapSVG(svg, timeLabelSkipCount, heatMapBoxStartX, heatMapSingleAreaWidth);
 	}
 
 	/**
