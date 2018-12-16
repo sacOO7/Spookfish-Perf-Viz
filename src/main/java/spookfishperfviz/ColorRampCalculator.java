@@ -32,7 +32,7 @@ final class ColorRampCalculator {
 		final double min = minMax[0];
 		final double max = minMax[1];
 
-		final ColorRampCalculator colorCalculator = new ColorRampCalculator(min, max, colorScheme);
+		final var colorCalculator = new ColorRampCalculator(min, max, colorScheme);
 
 		final int size = values.length;
 		final String[] colorMap = new String[size];

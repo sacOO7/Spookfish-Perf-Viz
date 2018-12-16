@@ -101,7 +101,7 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 	private static <T extends Comparable<T>> NavigableSet<IndexedDataPoint<T>> sortAndIndex(final Set<T> intervalPoints) {
 		final NavigableSet<IndexedDataPoint<T>> points = new TreeSet<>();
 
-		for (final T iPoint : intervalPoints) {
+		for (var iPoint : intervalPoints) {
 			points.add(IndexedDataPoint.createFinite(iPoint));
 		}
 
@@ -109,8 +109,8 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 		points.add(IndexedDataPoint.createPositiveInfinite());
 
 		int index = 0;
-		for (final IndexedDataPoint<T> p : points) {
-			p.setIndex(index++);
+		for (var point : points) {
+			point.setIndex(index++);
 		}
 
 		return points;
@@ -153,17 +153,17 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 	}
 
 	void apply(final R row, final C column, final UnaryOperator<V> operator) {
-		final int rowNum = calculateIndex(row, this.rowIntervalPoints);
-		final int columnNum = calculateIndex(column, this.columnIntervalPoints);
+		var rowNum = calculateIndex(row, this.rowIntervalPoints);
+		var columnNum = calculateIndex(column, this.columnIntervalPoints);
 
 		this.matrix[rowNum][columnNum] = operator.apply(this.matrix[rowNum][columnNum]);
 	}
 
 	@Override
 	public String toString() {
-		final String NL = System.lineSeparator();
+		var NL = System.lineSeparator();
 
-		StringBuilder str = new StringBuilder("Points on X axis=" + this.columnIntervalPoints + NL + "Points on Y axis=" + this.rowIntervalPoints + NL);
+		var str = new StringBuilder("Points on X axis=" + this.columnIntervalPoints + NL + "Points on Y axis=" + this.rowIntervalPoints + NL);
 
 		for (final V[] row : this.matrix) {
 			str.append(Arrays.deepToString(row)).append(NL);
