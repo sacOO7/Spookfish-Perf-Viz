@@ -106,13 +106,10 @@ public final class LatencyReportGenerator {
 										final ColorRampScheme colorRampScheme, 
 										final String outputFilePath) throws IOException {
 		
-		final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = new LatencyStatsToHtmlFunc() {
-			@Override
-			public String[] toHtml(final LatencyStats stats) {
+		final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = stats -> {
 
-				final TimeSeriesLatencyDensity density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, maxIntervalPointsForLatencyDensity);
-				return stats.toHtml(intervalPointsForLatencyHistogram, percentileKeys, density, heatMapSingleAreaWidth, colorRampScheme);
-			}
+			final TimeSeriesLatencyDensity density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, maxIntervalPointsForLatencyDensity);
+			return stats.toHtml(intervalPointsForLatencyHistogram, percentileKeys, density, heatMapSingleAreaWidth, colorRampScheme);
 		};
 
 		return generateReport(source, parser, latencyUnit, outputTimeZone, latencyStatsToHtmlFunc, outputFilePath);
@@ -131,13 +128,10 @@ public final class LatencyReportGenerator {
 										final ColorRampScheme colorRampScheme, 
 										final String outputFilePath) throws IOException {
 		
-		final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = new LatencyStatsToHtmlFunc() {
-			@Override
-			public String[] toHtml(final LatencyStats stats) {
+		final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = stats -> {
 
-				final TimeSeriesLatencyDensity density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, minIntervalPointForLatencyDensity, maxIntervalPointForLatencyDensity, maxIntervalPointsForLatencyDensity);
-				return stats.toHtml(intervalPointsForLatencyHistogram, percentileKeys, density, heatMapSingleAreaWidth, colorRampScheme);
-			}
+			final TimeSeriesLatencyDensity density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, minIntervalPointForLatencyDensity, maxIntervalPointForLatencyDensity, maxIntervalPointsForLatencyDensity);
+			return stats.toHtml(intervalPointsForLatencyHistogram, percentileKeys, density, heatMapSingleAreaWidth, colorRampScheme);
 		};
 
 		return generateReport(source, parser, latencyUnit, outputTimeZone, latencyStatsToHtmlFunc, outputFilePath);

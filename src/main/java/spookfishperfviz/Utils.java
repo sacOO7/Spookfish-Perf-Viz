@@ -132,12 +132,7 @@ final class Utils {
 
 	static <C extends Collection<String>> C getPaddedLabels(final Collection<? extends CharSequence> labels, final int maxLabelLength, final Supplier<C> s, final boolean escapeHTMLSpecialChars) {
 		
-		final Function<CharSequence, String> paddingFunc = new Function<CharSequence, String>() {
-			@Override
-			public String apply(final CharSequence cs) {
-				return getPaddedLabel(cs, maxLabelLength, escapeHTMLSpecialChars);
-			}
-		};
+		final Function<CharSequence, String> paddingFunc = cs -> getPaddedLabel(cs, maxLabelLength, escapeHTMLSpecialChars);
 
 		return forEach(labels, paddingFunc, s);
 	}

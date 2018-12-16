@@ -54,24 +54,9 @@ final class TimeSeriesLatencyDensity {
 	private static final double X_AXIS_LABEL_FONT_SIZE = 10; // TODO - add to SVGConstants.
 	private static final String X_AXIS_LABEL_FONT_FAMILY = SVGConstants.MONOSPACE_FONT_FAMILY;
 
-	
-	private static final UnaryOperator<Long> LONG_INC_OPERATOR = new UnaryOperator<Long>() {
-		@Override
-		public Long apply(final Long l) {
-			return l == null ? Long.valueOf(0) : Long.valueOf(l + 1);
-		}
-	};
+	private static final UnaryOperator<Long> LONG_INC_OPERATOR = l -> l == null ? Long.valueOf(0) : Long.valueOf(l + 1);
 
-	
-
-	
-
-	private static final Function<IndexedDataPoint<Double>, String> Y_AXIS_LABEL_MAKER = new Function<Density.IndexedDataPoint<Double>, String>() {
-		@Override
-		public String apply(final IndexedDataPoint<Double> i) {
-			return i.toString(new StripTrailingZeroesAfterDecimalFunction(true));
-		}
-	};
+	private static final Function<IndexedDataPoint<Double>, String> Y_AXIS_LABEL_MAKER = i -> i.toString(new StripTrailingZeroesAfterDecimalFunction(true));
 
 	private static final class TimestampLabelMaker implements Function<Long, String> {
 
