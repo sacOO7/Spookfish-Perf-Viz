@@ -54,18 +54,6 @@ final class Utils {
 		//
 	}
 
-	static List<String> lines(String multiLineText) {
-		List<String> lines = new ArrayList<>();
-
-		try (var scanner = new LineScanner(multiLineText)) {
-			for (var line : scanner) {
-				lines.add(line);
-			}
-		}
-
-		return lines;
-	}
-
 	static String toSvgText(String text) {
 		var NL = System.lineSeparator();
 		var lineSpace = SVGConstants.LINE_GAP;
@@ -435,8 +423,8 @@ final class Utils {
 	}
 
 	static MultiSpanSVGText createMultiSpanSVGText(String multiLineText, double x, double y, double fontSize, String color) {
-		
-		var lines = Utils.lines(multiLineText);
+
+		var lines = multiLineText.lines().collect(Collectors.toList());
 		var spanCount = lines.size();
 
 		var NL = System.lineSeparator();
