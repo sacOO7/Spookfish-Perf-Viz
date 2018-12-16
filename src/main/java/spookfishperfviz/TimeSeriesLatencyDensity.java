@@ -294,13 +294,13 @@ final class TimeSeriesLatencyDensity {
 		final double BOX_START_Y = START_Y;
 		
 		final ArrayList<String> yAxisLabels = 
-				forEach(reverse(density.getRowIntervalPoints(), new ArrayListSupplier<IndexedDataPoint<Double>>()), Y_AXIS_LABEL_MAKER, new ArrayListSupplier<String>());
+				forEach(reverse(density.getRowIntervalPoints(), new ArrayListSupplier<>()), Y_AXIS_LABEL_MAKER, new ArrayListSupplier<>());
 		
 		final int yAxisMaxLabelLength =
-				Collections.max(forEach(yAxisLabels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<Integer>()));
+				Collections.max(forEach(yAxisLabels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<>()));
 		
 		final ArrayList<String> yAxisPaddedLabels = 
-				Utils.getPaddedLabels(yAxisLabels, yAxisMaxLabelLength, new ArrayListSupplier<String>(), true);
+				Utils.getPaddedLabels(yAxisLabels, yAxisMaxLabelLength, new ArrayListSupplier<>(), true);
 		
 		final double yAxisMaxLabelWidth = yAxisMaxLabelLength * SVGConstants.MONOSPACE_FONT_WIDTH;
 		

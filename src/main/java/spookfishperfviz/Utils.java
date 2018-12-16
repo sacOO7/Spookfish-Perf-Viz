@@ -126,7 +126,7 @@ final class Utils {
 	// TODO - use this in BarChart
 	static <C extends Collection<String>> C getPaddedLabels(final Collection<? extends CharSequence> labels, final Supplier<C> s, final boolean escapeHTMLSpecialChars) {
 		
-		final int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<Integer>()));
+		final int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<>()));
 		return getPaddedLabels(labels, maxLabelLength, s, escapeHTMLSpecialChars);
 	}
 
