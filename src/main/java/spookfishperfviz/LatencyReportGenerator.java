@@ -87,7 +87,7 @@ public final class LatencyReportGenerator {
 
 		final Path path;
 
-		try (final Reader fr = new FileReader(inFile); final Reader source = new BufferedReader(fr);) {
+		try (final Reader fr = new FileReader(inFile); final Reader source = new BufferedReader(fr)) {
 			
 			path = generateReport(source, parser, latencyUnit, outputTimeZone, histogramIntervalPoints, percentilePoints, 
 									heatMapMaxIntervalPoints, heatMapSingleAreaWidth, colorRampScheme, outFile);
@@ -151,7 +151,7 @@ public final class LatencyReportGenerator {
 										final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc, 
 										final String outputFilePath) throws IOException {
 
-		try (RecordIterator recordIterator = RecordIterator.create(source, parser);)
+		try (RecordIterator recordIterator = RecordIterator.create(source, parser))
 		{
 			final Path reportFilePath;
 
@@ -182,7 +182,7 @@ public final class LatencyReportGenerator {
 										final TimeUnit latencyUnit, 
 										final TimeZone outputTimeZone, 
 										final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc, 
-										final String outputFilePath) throws IOException, FileNotFoundException {
+										final String outputFilePath) throws IOException {
 		
 		return generateReport(parseRawFile(rawDataFile), latencyUnit, outputTimeZone, latencyStatsToHtmlFunc, outputFilePath);
 	}
@@ -231,7 +231,7 @@ public final class LatencyReportGenerator {
 			contentsHtml.append(h[1]).append(NL);
 			contentsHtml.append("<br/><br/>").append(NL);
 			
-			linkHtmlsSortedByMedian.put(Double.valueOf(latencyStats.getMedian()), h[0]);
+			linkHtmlsSortedByMedian.put(latencyStats.getMedian(), h[0]);
 
 			latenciesSuperSet.addAll(latencies);
 		}
@@ -274,12 +274,12 @@ public final class LatencyReportGenerator {
 		 */
 	}
 
-	private static Map<String, List<TimestampAndLatency>> parseRawFile(final File rawFile) throws IOException, FileNotFoundException {
+	private static Map<String, List<TimestampAndLatency>> parseRawFile(final File rawFile) throws IOException {
 		final Map<String, List<TimestampAndLatency>> data = new TreeMap<>();
 
 		try (final FileInputStream fis = new FileInputStream(rawFile);
 				final BufferedInputStream bis = new BufferedInputStream(fis);
-				final DataInputStream dis = new DataInputStream(bis);) {
+				final DataInputStream dis = new DataInputStream(bis)) {
 
 			while (true) {
 
@@ -314,7 +314,7 @@ public final class LatencyReportGenerator {
 		list.add(new TimestampAndLatency(timestamp, latency));
 	}
 
-	private static File createRawFile(final RecordIterator recordIterator) throws IOException, FileNotFoundException {
+	private static File createRawFile(final RecordIterator recordIterator) throws IOException {
 		
 		final String tmpIODir = System.getProperty("java.io.tmpdir");
 		final Path baseDir = Files.createDirectories(Paths.get(tmpIODir, "perfstats_jackpot"));
@@ -334,7 +334,7 @@ public final class LatencyReportGenerator {
 
 		try (final FileOutputStream fw = new FileOutputStream(rawFile);
 				BufferedOutputStream bos = new BufferedOutputStream(fw);
-				DataOutputStream dos = new DataOutputStream(bos);) {
+				DataOutputStream dos = new DataOutputStream(bos)) {
 			while (recordIterator.hasNext()) {
 
 				final Record record = recordIterator.next();
@@ -435,6 +435,7 @@ public final class LatencyReportGenerator {
 			int highestTrxCount = Integer.MIN_VALUE;
 			int lowestTrxCount = Integer.MAX_VALUE;
 
+			//noinspection ForLoopReplaceableByForEach
 			for (int hour = 0; hour < len; hour++) {
 				final int trxCount = trxCounts[hour];
 
@@ -442,7 +443,7 @@ public final class LatencyReportGenerator {
 				lowestTrxCount = Math.min(trxCount, lowestTrxCount);
 			}
 
-			final int trxCountPadding = String.format("%d", Integer.valueOf(highestTrxCount)).length();
+			final int trxCountPadding = String.format("%d", highestTrxCount).length();
 
 			final String[] labels = new String[len];
 			final List<Integer> peakHours = new ArrayList<>();
@@ -453,9 +454,9 @@ public final class LatencyReportGenerator {
 				final int trxCount = trxCounts[hour];
 				final double perc = (trxCount * 100.0) / totalTrxCount;
 
-				final Integer hourBoxed = Integer.valueOf(hour);
+				final Integer hourBoxed = hour;
 
-				labels[hour] = String.format("%1s    %2$02d    %3$" + trxCountPadding + "d    %4$6.2f%%", dayStr, hourBoxed, Integer.valueOf(trxCount), Double.valueOf(perc));
+				labels[hour] = String.format("%1s    %2$02d    %3$" + trxCountPadding + "d    %4$6.2f%%", dayStr, hourBoxed, trxCount, perc);
 
 				if (trxCount == highestTrxCount) {
 					peakHours.add(hourBoxed);
@@ -511,7 +512,7 @@ public final class LatencyReportGenerator {
 				this.data.put(startOfDay, stats);
 			}
 
-			stats.add(timestamp - startOfDay.longValue());
+			stats.add(timestamp - startOfDay);
 		}
 
 		@Override
@@ -940,7 +941,7 @@ public final class LatencyReportGenerator {
 		}
 	}
 	
-	private static interface LatencyStatsToHtmlFunc {
+	private interface LatencyStatsToHtmlFunc {
 		String[] toHtml(LatencyStats stats);
 	}
 }

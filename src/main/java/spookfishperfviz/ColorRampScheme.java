@@ -45,19 +45,19 @@ public enum ColorRampScheme {
 	private final String[] foregroundColors;
 	private final String backgroundColor;
 
-	private ColorRampScheme(final ColorPalette palette, final int nDataClasses) {
+	ColorRampScheme(final ColorPalette palette, final int nDataClasses) {
 		this(palette, nDataClasses, WHITE);
 	}
 
-	private ColorRampScheme(final ColorPalette palette, final int nDataClasses, final String backgroundColor) {
+	ColorRampScheme(final ColorPalette palette, final int nDataClasses, final String backgroundColor) {
 		this(palette.getColors(), nDataClasses, backgroundColor);
 	}
 
-	private ColorRampScheme(final String[] foregroundColorSet, final int nDataClasses, final String backgroundColor) {
+	ColorRampScheme(final String[] foregroundColorSet, final int nDataClasses, final String backgroundColor) {
 		this(Arrays.copyOfRange(foregroundColorSet, (foregroundColorSet.length - nDataClasses), foregroundColorSet.length), backgroundColor);
 	}
 
-	private ColorRampScheme(final String[] foregroundColors, final String backgroundColor) {
+	ColorRampScheme(final String[] foregroundColors, final String backgroundColor) {
 
 		for (String fc : foregroundColors) {
 			if (Objects.equals(fc, backgroundColor)) {
@@ -80,7 +80,7 @@ public enum ColorRampScheme {
 	/**
 	 * @see <a href="http://colorbrewer2.org/">Sequential color schemes from Color Brewer</a>
 	 */
-	private static enum ColorPalette {
+	private enum ColorPalette {
 
 		COLOR_BREWER_RED	(new String[] {"#fff5f0", "#fee0d2", "#fcbba1", "#fc9272", "#fb6a4a", "#ef3b2c", "#cb181d", "#a50f15", "#67000d"}),
 		COLOR_BREWER_PURPLE	(new String[] {"#fcfbfd", "#efedf5", "#dadaeb", "#bcbddc", "#9e9ac8", "#807dba", "#6a51a3", "#54278f", "#3f007d"}),

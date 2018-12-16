@@ -28,7 +28,7 @@ import java.util.regex.Pattern;
  */
 public final class SimpleRegexBasedRecordParser extends RecordParser {
 
-	public static enum NamedGroup {
+	public enum NamedGroup {
 		Latency, EventName, Timestamp;
 
 		public String getGroup(final String regex) {

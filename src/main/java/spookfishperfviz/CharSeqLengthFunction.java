@@ -23,7 +23,7 @@ package spookfishperfviz;
  */
 final class CharSeqLengthFunction implements Function<CharSequence, Integer> {
 
-	static CharSeqLengthFunction INSTANCE = new CharSeqLengthFunction();
+	static final CharSeqLengthFunction INSTANCE = new CharSeqLengthFunction();
 
 	private CharSeqLengthFunction() {
 		//
@@ -31,7 +31,7 @@ final class CharSeqLengthFunction implements Function<CharSequence, Integer> {
 
 	@Override
 	public Integer apply(final CharSequence s) {
-		return Integer.valueOf(s.length());
+		return s.length();
 	}
 
 }

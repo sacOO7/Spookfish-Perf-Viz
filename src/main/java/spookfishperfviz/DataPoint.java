@@ -23,14 +23,14 @@ package spookfishperfviz;
  */
 final class DataPoint<C extends Comparable<C>> implements Comparable<DataPoint<C>> {
 
-	private static enum Type {
+	private enum Type {
 
 		NEGATIVE_INFINITE(-1, "<"), FINITE(0, ""), POSITIVE_INFINITE(1, ">");
 
 		final int val;
 		final String symbol;
 
-		private Type(final int val, final String symbol) {
+		Type(final int val, final String symbol) {
 			this.val = val;
 			this.symbol = symbol;
 		}
@@ -90,10 +90,7 @@ final class DataPoint<C extends Comparable<C>> implements Comparable<DataPoint<C
 		} else if (!this.actualData.equals(other.actualData)) {
 			return false;
 		}
-		if (this.type != other.type) {
-			return false;
-		}
-		return true;
+		return this.type == other.type;
 	}
 
 	@Override

@@ -106,7 +106,7 @@ final class VerticalBarChart {
 			svgBars.append(NL);
 
 			final boolean skipLabel = Utils.skipLabel(i, size, labelSkipCount);
-			if (skipLabel == false) {
+			if (!skipLabel) {
 
 				final String label = Utils.escapeHTMLSpecialChars(labels[i]);
 

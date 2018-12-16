@@ -25,6 +25,6 @@ final class LongIncrementOperator implements UnaryOperator<Long> {
 	
 	@Override
 	public Long apply(final Long l) {
-		return l == null ? Long.valueOf(0) : Long.valueOf(l.longValue() + 1);
+		return l == null ? Long.valueOf(0) : Long.valueOf(l + 1);
 	}
 }

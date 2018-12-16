@@ -85,8 +85,8 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 
 		final SortedMap<Interval<C>, Integer> hist = new TreeMap<>();
 
-		if (ignoreEmptyIntervals == false) {
-			final Integer ZERO = Integer.valueOf(0);
+		if (!ignoreEmptyIntervals) {
+			final Integer ZERO = 0;
 			for (final Interval<C> interval : intervals) {
 				hist.put(interval, ZERO);
 			}
@@ -95,7 +95,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 		for (final C datum : data) {
 			for (final Interval<C> interval : intervals) {
 				if (interval.contains(DataPoint.createFinite(datum))) {
-					hist.put(interval, hist.containsKey(interval) ? Integer.valueOf(hist.get(interval).intValue() + 1) : Integer.valueOf(1));
+					hist.put(interval, hist.containsKey(interval) ? Integer.valueOf(hist.get(interval) + 1) : Integer.valueOf(1));
 					break;
 				}
 			}
@@ -128,7 +128,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 		final String[] labels = new String[size];
 
 		for (int k = 0; k < size; k++) {
-			data[k] = entries[k].getValue().intValue();
+			data[k] = entries[k].getValue();
 			labels[k] = labelMaker.getDataLabel(k);
 		}
 		
@@ -206,13 +206,8 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 				return false;
 			}
 			if (this.low == null) {
-				if (other.low != null) {
-					return false;
-				}
-			} else if (!this.low.equals(other.low)) {
-				return false;
-			}
-			return true;
+				return other.low == null;
+			} else return this.low.equals(other.low);
 		}
 
 		@Override
@@ -250,7 +245,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 				final Interval<C> interval = row.getKey();
 				final Integer frequency = row.getValue();
 
-				sumOfFrequencies += frequency.intValue();
+				sumOfFrequencies += frequency;
 				iPadding = Math.max(iPadding, interval.toString(dataPointFormatter).length());
 				fPadding = Math.max(fPadding, String.valueOf(frequency).length());
 			}
@@ -269,7 +264,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 			double cumulative = 0;
 
 			for (int i = 0; i < size; i++) {
-				final int frequency = entries[i].getValue().intValue();
+				final int frequency = entries[i].getValue();
 
 				final double perc = (frequency * 100.0) / sumOfFrequencies;
 				cumulative += perc;

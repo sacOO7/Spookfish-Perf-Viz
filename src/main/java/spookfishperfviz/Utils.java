@@ -54,7 +54,7 @@ final class Utils {
 	static List<String> lines(final String multiLineText) {
 		final List<String> lines = new ArrayList<>();
 
-		try (final LineScanner scanner = new LineScanner(multiLineText);) {
+		try (final LineScanner scanner = new LineScanner(multiLineText)) {
 			for (final String line : scanner) {
 				lines.add(line);
 			}
@@ -72,7 +72,7 @@ final class Utils {
 		int maxLineLength = Integer.MIN_VALUE;
 		int height = lineSpace;
 
-		try (final Scanner s = new Scanner(text);) {
+		try (final Scanner s = new Scanner(text)) {
 
 			s.useDelimiter("\r\n|[\n\r\u2028\u2029\u0085]");
 
@@ -127,7 +127,7 @@ final class Utils {
 	// TODO - use this in BarChart
 	static <C extends Collection<String>> C getPaddedLabels(final Collection<? extends CharSequence> labels, final Supplier<C> s, final boolean escapeHTMLSpecialChars) {
 		
-		final int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<Integer>())).intValue();
+		final int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<Integer>()));
 		return getPaddedLabels(labels, maxLabelLength, s, escapeHTMLSpecialChars);
 	}
 
@@ -192,7 +192,7 @@ final class Utils {
 
 		final Set<Long> timestampIntervalPoints = new HashSet<>();
 		for (long point = flooredMinTime, interval = timeIntervalInMillis; point <= (maxTime + interval); point += interval) {
-			timestampIntervalPoints.add(Long.valueOf(point));
+			timestampIntervalPoints.add(point);
 		}
 
 		return timestampIntervalPoints;
@@ -201,7 +201,7 @@ final class Utils {
 	static Set<Double> toHashSet(final double[] doubles) {
 		final Set<Double> set = new HashSet<>(doubles.length);
 		for (final double d : doubles) {
-			set.add(Double.valueOf(d));
+			set.add(d);
 		}
 		return set;
 	}
@@ -215,7 +215,7 @@ final class Utils {
 		calendar.set(Calendar.SECOND, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 
-		return Long.valueOf(calendar.getTimeInMillis());
+		return calendar.getTimeInMillis();
 	}
 
 	static long getStartOfHour(final long timestamp, final TimeZone timeZone) {
@@ -316,9 +316,7 @@ final class Utils {
 		final double[] validKeys = new double[n];
 		int k = 0;
 
-		for (int i = 0; i < n; i++) {
-			final double key = sortedKeys[i];
-
+		for (final double key : sortedKeys) {
 			try {
 				result[k] = Utils.getPthPercentile(sortedData, key);
 			} catch (final IllegalPercentileKeyException e) {
@@ -484,7 +482,7 @@ final class Utils {
 	}
 
 	static void createFile(final String content, final String filePath) throws IOException {
-		try (final FileWriter fw = new FileWriter(filePath); final BufferedWriter bw = new BufferedWriter(fw);) {
+		try (final FileWriter fw = new FileWriter(filePath); final BufferedWriter bw = new BufferedWriter(fw)) {
 			bw.write(content);
 		}
 	}
@@ -493,7 +491,7 @@ final class Utils {
 
 		final List<Double> l = new ArrayList<>(data.length);
 		for (final double d : data) {
-			l.add(Double.valueOf(d));
+			l.add(d);
 		}
 		return l;
 	}
@@ -624,7 +622,7 @@ final class Utils {
 				if ((s == null) || (s.length() != 1)) {
 					throw new ParseException(type, s);
 				}
-				value = Character.valueOf(s.charAt(0));
+				value = s.charAt(0);
 
 			} else if ((type == Short.class) || (type == short.class)) {
 				value = Short.valueOf(s);
@@ -732,7 +730,7 @@ final class Utils {
 
 			format.append('.').append(precision).append('f');
 
-			result = String.format(format.toString(), Double.valueOf(value));
+			result = String.format(format.toString(), value);
 		}
 
 		return result;
@@ -783,7 +781,7 @@ final class Utils {
 
 		for (int r = 0, i = 0; r < rowCount; r++) {
 			for (int c = 0; c < colCount; c++) {
-				array[i++] = matrix[r][c].longValue();
+				array[i++] = matrix[r][c];
 			}
 		}
 
@@ -832,14 +830,14 @@ final class Utils {
 			for (int i = 1; i < sorted.length; i++) {
 				final double d = sorted[i];
 				if (d != 0) {
-					nzmi = Double.valueOf(d);
+					nzmi = d;
 					break;
 				}
 			}
 
 			nonZeroMin = nzmi;
 		} else {
-			nonZeroMin = Double.valueOf(min);
+			nonZeroMin = min;
 		}
 
 		final Double nonZeroMax;
@@ -850,14 +848,14 @@ final class Utils {
 			for (int i = sorted.length - 2; i >= 0; i--) {
 				final double d = sorted[i];
 				if (d != 0) {
-					nzma = Double.valueOf(d);
+					nzma = d;
 					break;
 				}
 			}
 
 			nonZeroMax = nzma;
 		} else {
-			nonZeroMax = Double.valueOf(max);
+			nonZeroMax = max;
 		}
 
 		return new Double[] { nonZeroMin, nonZeroMax };

@@ -84,13 +84,8 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 			}
 			final IndexedDataPoint<?> other = (IndexedDataPoint<?>) obj;
 			if (this.dataPoint == null) {
-				if (other.dataPoint != null) {
-					return false;
-				}
-			} else if (!this.dataPoint.equals(other.dataPoint)) {
-				return false;
-			}
-			return true;
+				return other.dataPoint == null;
+			} else return this.dataPoint.equals(other.dataPoint);
 		}
 
 		@Override

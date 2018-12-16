@@ -138,10 +138,10 @@ final class RecordIterator implements Iterator<Record>, AutoCloseable {
 	}
 
 	private String readNextLine() {
-		final Scanner s = this.scanner;
+		final Scanner scanner = this.scanner;
 
 		while (true) {
-			final String line = s.next();
+			final String line = scanner.next();
 
 			if (!this.parser.isIgnore(line)) {
 				return line;

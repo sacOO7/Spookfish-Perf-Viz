@@ -41,6 +41,7 @@ import spookfishperfviz.Density.IndexedDataPoint;
  */
 final class TimeSeriesLatencyDensity {
 
+	private static final String[] EMPTY_STRING_ARRAY = new String[0];
 	private static final int DEFAULT_HEAT_MAP_SINGLE_AREA_HEIGHT = 10;
 
 	/**
@@ -57,7 +58,7 @@ final class TimeSeriesLatencyDensity {
 	private static final UnaryOperator<Long> LONG_INC_OPERATOR = new UnaryOperator<Long>() {
 		@Override
 		public Long apply(final Long l) {
-			return l == null ? Long.valueOf(0) : Long.valueOf(l.longValue() + 1);
+			return l == null ? Long.valueOf(0) : Long.valueOf(l + 1);
 		}
 	};
 
@@ -98,7 +99,7 @@ final class TimeSeriesLatencyDensity {
 
 		@Override
 		public String apply(final Long time) {
-			final Date d = new Date(time.longValue());
+			final Date d = new Date(time);
 			return this.timeFormat.format(d) + NL + this.dayMonthFormat.format(d) + NL + this.yearFormat.format(d);
 		}
 	}
@@ -172,7 +173,7 @@ final class TimeSeriesLatencyDensity {
 		
 		final int maxIntervalPoints = 
 				maxIntervalPointsForLatencyDensity == null ? 
-						DEFAULT_MAX_INTERBAL_POINTS_FOR_LATENCY_DENSITY : maxIntervalPointsForLatencyDensity.intValue();
+						DEFAULT_MAX_INTERBAL_POINTS_FOR_LATENCY_DENSITY : maxIntervalPointsForLatencyDensity;
 		
 		final double[] intervalPointsForLatencyDensity = 
 				createIntervalPoints(adjustedMinIntervalPointForLatencyDensity, adjustedMaxIntervalPointForLatencyDensity, maxIntervalPoints);
@@ -242,11 +243,11 @@ final class TimeSeriesLatencyDensity {
 			timestampIntervalPoints = inputTimestampIntervalPoints;
 		}
 
-		final Density<Double, Long, Long> d = Density.create(responseTimeIntervalPoints, timestampIntervalPoints, Long.valueOf(0), Long.class);
+		final Density<Double, Long, Long> d = Density.create(responseTimeIntervalPoints, timestampIntervalPoints, 0L, Long.class);
 
 		for (int i = 0; i < latencies.length; i++) {
-			final Double row = Double.valueOf(latencies[i]);
-			final Long column = Long.valueOf(timestamps[i]);
+			final Double row = latencies[i];
+			final Long column = timestamps[i];
 
 			d.apply(row, column, LONG_INC_OPERATOR);
 		}
@@ -310,8 +311,8 @@ final class TimeSeriesLatencyDensity {
 		final ArrayList<String> yAxisLabels = 
 				forEach(reverse(density.getRowIntervalPoints(), new ArrayListSupplier<IndexedDataPoint<Double>>()), Y_AXIS_LABEL_MAKER, new ArrayListSupplier<String>());
 		
-		final int yAxisMaxLabelLength = 
-				Collections.max(forEach(yAxisLabels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<Integer>())).intValue();
+		final int yAxisMaxLabelLength =
+				Collections.max(forEach(yAxisLabels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<Integer>()));
 		
 		final ArrayList<String> yAxisPaddedLabels = 
 				Utils.getPaddedLabels(yAxisLabels, yAxisMaxLabelLength, new ArrayListSupplier<String>(), true);
@@ -381,7 +382,7 @@ final class TimeSeriesLatencyDensity {
 		
 				final boolean skipLabel = Utils.skipLabel(i, rowCount, yAxisLabelSkipCount);
 		
-				if (skipLabel == false) {
+				if (!skipLabel) {
 					yAxisLabelsSVG.append("<text style=\"dominant-baseline: central;\" x=\"").append(Y_AXIS_LABEL_START_X).append("\" y=\"")
 							.append(yAxisLabelStartY).append("\">").append(yAxisPaddedLabels.get(i)).append("</text>").append(NL);
 					
@@ -425,7 +426,7 @@ final class TimeSeriesLatencyDensity {
 				xAxisTicksSVG.append("<line x1=\"").append(x).append("\" y1=\"").append(xAxisTickStartY).append("\" x2=\"").append(x)
 						.append("\" y2=\"").append(xAxisTickEndY).append("\"/>").append(NL);
 		
-				if (skipLabel == false) {
+				if (!skipLabel) {
 					final String multiLineLabel = timestampPoints.get(i).toString(timestampLabelMaker);
 		
 					final MultiSpanSVGText label = Utils.createMultiSpanSVGText(multiLineLabel, x, xAxisLabelStartY, fontSize, null);
@@ -582,8 +583,9 @@ final class TimeSeriesLatencyDensity {
 
 		for (int column = 0; column < columnCount; column++) {
 			long sum = 0;
+			//noinspection ForLoopReplaceableByForEach
 			for (int row = 0; row < rowCount; row++) {
-				sum += matrix[row][column].longValue();
+				sum += matrix[row][column];
 			}
 
 			columnTotals[column] = sum;
@@ -594,7 +596,7 @@ final class TimeSeriesLatencyDensity {
 			labels.add(columnIntervalPoint.toString(timestampLabelMaker));
 		}
 
-		final VerticalBarChart barChart = VerticalBarChart.create(columnTotals, labels.toArray(new String[labels.size()]));
+		final VerticalBarChart barChart = VerticalBarChart.create(columnTotals, labels.toArray(EMPTY_STRING_ARRAY);
 
 		return barChart.toSVG(MAX_BAR_LENGTH, barWidth, boxStartX, X_AXIS_LABEL_FONT_FAMILY, X_AXIS_LABEL_FONT_SIZE, labelSkipCount, colorRampScheme);
 	}
