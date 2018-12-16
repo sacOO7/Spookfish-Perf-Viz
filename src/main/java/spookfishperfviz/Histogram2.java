@@ -73,7 +73,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 			if (itr.hasNext()) {
 				high = DataPoint.createFinite(itr.next());
 			} else {
-				high = DataPoint.<C> createPositiveInfinite();
+				high = DataPoint.createPositiveInfinite();
 				loop = false;
 			}
 
