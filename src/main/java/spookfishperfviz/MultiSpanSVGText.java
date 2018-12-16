@@ -26,7 +26,7 @@ final class MultiSpanSVGText {
 	private final CharSequence svg;
 	private final int spanCount;
 
-	MultiSpanSVGText(final CharSequence svg, final int spanCount) {
+	MultiSpanSVGText(CharSequence svg, int spanCount) {
 		this.svg = svg;
 		this.spanCount = spanCount;
 	}

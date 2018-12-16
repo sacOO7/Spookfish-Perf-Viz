@@ -25,7 +25,7 @@ final class ParseException extends Exception {
 
 	private static final long serialVersionUID = 5902101925184248275L;
 
-	ParseException(final Class<?> type, final String value) {
+	ParseException(Class<?> type, String value) {
 		super("<" + value + "> cannot be parsed as <" + type + ">");
 	}
 }

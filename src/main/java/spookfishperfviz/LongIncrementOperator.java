@@ -24,7 +24,7 @@ package spookfishperfviz;
 final class LongIncrementOperator implements UnaryOperator<Long> {
 	
 	@Override
-	public Long apply(final Long l) {
+	public Long apply(Long l) {
 		return l == null ? Long.valueOf(0) : Long.valueOf(l + 1);
 	}
 }

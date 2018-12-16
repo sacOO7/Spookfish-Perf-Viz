@@ -23,10 +23,10 @@ package spookfishperfviz;
  */
 public final class Main {
 
-	public static void main(final String[] args) throws Exception {
+	public static void main(String[] args) throws Exception {
 
-		final Options options = Options.create(args);
-		final String task = options.getMandatory("task", String.class);
+		var options = Options.create(args);
+		var task = options.getMandatory("task", String.class);
 
 		switch (task) {
 

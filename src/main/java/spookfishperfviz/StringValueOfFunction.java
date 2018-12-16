@@ -32,7 +32,7 @@ final class StringValueOfFunction implements Function<Object, String> {
 	}
 
 	@Override
-	public String apply(final Object o) {
+	public String apply(Object o) {
 		return String.valueOf(o);
 	}
 

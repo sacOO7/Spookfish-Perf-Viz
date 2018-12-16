@@ -25,27 +25,27 @@ final class BadOptionsException extends Exception {
 
 	private static final long serialVersionUID = 7736583174452576492L;
 
-	static BadOptionsException badOptionName(final String message, final String[] args, final int argNum) {
+	static BadOptionsException badOptionName(String message, String[] args, int argNum) {
 		return new BadOptionsException(message + ": args[" + argNum + "] = <" + args[argNum] + ">");
 	}
 
-	static BadOptionsException optionNotSpecified(final String optionName) {
+	static BadOptionsException optionNotSpecified(String optionName) {
 		return new BadOptionsException("Option <" + optionName + "> is not specified");
 	}
 
-	static BadOptionsException valueNotSpecified(final String optionName) {
+	static BadOptionsException valueNotSpecified(String optionName) {
 		return new BadOptionsException("Value is not specified for option <" + optionName + ">");
 	}
 
-	static BadOptionsException illegalValue(final String optionName, final String message, final Throwable cause) {
+	static BadOptionsException illegalValue(String optionName, String message, Throwable cause) {
 		return new BadOptionsException("Option <" + optionName + "> has illegal value. " + message, cause);
 	}
 
-	private BadOptionsException(final String message) {
+	private BadOptionsException(String message) {
 		this(message, null);
 	}
 
-	private BadOptionsException(final String message, final Throwable cause) {
+	private BadOptionsException(String message, Throwable cause) {
 		super(message, cause);
 	}
 }

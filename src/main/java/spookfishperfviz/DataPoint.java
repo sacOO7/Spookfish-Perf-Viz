@@ -32,13 +32,13 @@ final class DataPoint<C extends Comparable<C>> implements Comparable<DataPoint<C
 		final int val;
 		final String symbol;
 
-		Type(final int val, final String symbol) {
+		Type(int val, String symbol) {
 			this.val = val;
 			this.symbol = symbol;
 		}
 	}
 
-	static <C extends Comparable<C>> DataPoint<C> createFinite(final C actualData) {
+	static <C extends Comparable<C>> DataPoint<C> createFinite(C actualData) {
 		return new DataPoint<>(actualData, Type.FINITE);
 	}
 
@@ -53,28 +53,28 @@ final class DataPoint<C extends Comparable<C>> implements Comparable<DataPoint<C
 	private final C actualData;
 	private final DataPoint.Type type;
 
-	private DataPoint(final C actualData, final DataPoint.Type type) {
+	private DataPoint(C actualData, DataPoint.Type type) {
 		this.actualData = actualData;
 		this.type = type;
 	}
 
 	@Override
-	public int compareTo(final DataPoint<C> other) {
+	public int compareTo(DataPoint<C> other) {
 		return ((this.type == Type.FINITE) && (other.type == Type.FINITE)) ? this.actualData.compareTo(other.actualData) : this.type.val
 				- other.type.val;
 	}
 
 	@Override
 	public int hashCode() {
-		final int prime = 31;
-		int result = 1;
+		var prime = 31;
+		var result = 1;
 		result = (prime * result) + ((this.actualData == null) ? 0 : this.actualData.hashCode());
 		result = (prime * result) + ((this.type == null) ? 0 : this.type.hashCode());
 		return result;
 	}
 
 	@Override
-	public boolean equals(final Object obj) {
+	public boolean equals(Object obj) {
 		if (this == obj) {
 			return true;
 		}
@@ -84,7 +84,7 @@ final class DataPoint<C extends Comparable<C>> implements Comparable<DataPoint<C
 		if (getClass() != obj.getClass()) {
 			return false;
 		}
-		final DataPoint<?> other = (DataPoint<?>) obj;
+		DataPoint<?> other = (DataPoint<?>) obj;
 		if (this.actualData == null) {
 			if (other.actualData != null) {
 				return false;
@@ -100,8 +100,8 @@ final class DataPoint<C extends Comparable<C>> implements Comparable<DataPoint<C
 		return toString(null);
 	}
 
-	String toString(final Function<C, String> formatter) {
-		final String ret;
+	String toString(Function<C, String> formatter) {
+		String ret;
 
 		if (this.type == Type.FINITE) {
 			if (formatter == null) {

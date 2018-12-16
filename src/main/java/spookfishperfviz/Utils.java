@@ -52,11 +52,11 @@ final class Utils {
 		//
 	}
 
-	static List<String> lines(final String multiLineText) {
-		final List<String> lines = new ArrayList<>();
+	static List<String> lines(String multiLineText) {
+		List<String> lines = new ArrayList<>();
 
-		try (final LineScanner scanner = new LineScanner(multiLineText)) {
-			for (final String line : scanner) {
+		try (var scanner = new LineScanner(multiLineText)) {
+			for (var line : scanner) {
 				lines.add(line);
 			}
 		}
@@ -64,29 +64,29 @@ final class Utils {
 		return lines;
 	}
 
-	static String toSvgText(final String text) {
-		final String NL = System.lineSeparator();
-		final int lineSpace = SVGConstants.LINE_GAP;
+	static String toSvgText(String text) {
+		var NL = System.lineSeparator();
+		var lineSpace = SVGConstants.LINE_GAP;
 
-		final StringBuilder texts = new StringBuilder();
+		var texts = new StringBuilder();
 
-		int maxLineLength = Integer.MIN_VALUE;
-		int height = lineSpace;
+		var maxLineLength = Integer.MIN_VALUE;
+		var height = lineSpace;
 
-		try (final Scanner s = new Scanner(text)) {
+		try (var s = new Scanner(text)) {
 
 			s.useDelimiter("\r\n|[\n\r\u2028\u2029\u0085]");
 
 			while (s.hasNext()) {
 
-				final String rawLine = s.next();
+				var rawLine = s.next();
 
-				final int rawLineLength = rawLine.length();
+				var rawLineLength = rawLine.length();
 				if (rawLineLength > maxLineLength) {
 					maxLineLength = rawLineLength;
 				}
 
-				final String line = rawLine.replace(" ", "&nbsp;");
+				var line = rawLine.replace(" ", "&nbsp;");
 
 				texts.append("<text x=\"").append(10).append("\" y=\"").append(height).append("\">").append(line).append("</text>").append(NL);
 
@@ -94,9 +94,9 @@ final class Utils {
 			}
 		}
 
-		final double width = (SVGConstants.LEFT_RIGHT_MARGIN * 2) + (maxLineLength * SVGConstants.MONOSPACE_FONT_WIDTH);
+		var width = (SVGConstants.LEFT_RIGHT_MARGIN * 2) + (maxLineLength * SVGConstants.MONOSPACE_FONT_WIDTH);
 
-		String buf =
+		var buf =
 				"<svg height=\"" + height + "\" width=\"" + width + "\">" + NL +
 				"<rect height=\"" + height + "\" width=\"" + width + "\" style=\"fill:white;stroke:black;stroke-width:1\"/>" + NL +
 				"<g fill=\"black\" style=\"font-family:" + SVGConstants.MONOSPACE_FONT_FAMILY + ";font-size:" + SVGConstants.MONOSPACE_FONT_SIZE + "px;\">" + NL +
@@ -106,18 +106,18 @@ final class Utils {
 		return buf;
 	}
 
-	static <T, R, C extends Collection<R>> C forEach(final Collection<T> c, final Function<? super T, R> f, final Supplier<C> s) {
-		final C ret = s.get();
+	static <T, R, C extends Collection<R>> C forEach(Collection<T> c, Function<? super T, R> f, Supplier<C> s) {
+		var ret = s.get();
 
-		for (final T e : c) {
+		for (var e : c) {
 			ret.add(f.apply(e));
 		}
 
 		return ret;
 	}
 
-	static <T, C extends List<T>> C reverse(final Collection<T> c, final Supplier<C> s) {
-		final C ret = s.get();
+	static <T, C extends List<T>> C reverse(Collection<T> c, Supplier<C> s) {
+		var ret = s.get();
 		ret.addAll(c);
 		Collections.reverse(ret);
 
@@ -125,55 +125,55 @@ final class Utils {
 	}
 
 	// TODO - use this in BarChart
-	static <C extends Collection<String>> C getPaddedLabels(final Collection<? extends CharSequence> labels, final Supplier<C> s, final boolean escapeHTMLSpecialChars) {
+	static <C extends Collection<String>> C getPaddedLabels(Collection<? extends CharSequence> labels, Supplier<C> s, boolean escapeHTMLSpecialChars) {
 		
-		final int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<>()));
+		int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<>()));
 		return getPaddedLabels(labels, maxLabelLength, s, escapeHTMLSpecialChars);
 	}
 
-	static <C extends Collection<String>> C getPaddedLabels(final Collection<? extends CharSequence> labels, final int maxLabelLength, final Supplier<C> s, final boolean escapeHTMLSpecialChars) {
+	static <C extends Collection<String>> C getPaddedLabels(Collection<? extends CharSequence> labels, int maxLabelLength, Supplier<C> s, boolean escapeHTMLSpecialChars) {
 		
-		final Function<CharSequence, String> paddingFunc = cs -> getPaddedLabel(cs, maxLabelLength, escapeHTMLSpecialChars);
+		Function<CharSequence, String> paddingFunc = cs -> getPaddedLabel(cs, maxLabelLength, escapeHTMLSpecialChars);
 
 		return forEach(labels, paddingFunc, s);
 	}
 
-	static String getPaddedLabel(final CharSequence label, final int maxLabelLength, final boolean escapeHTMLSpecialChars) {
+	static String getPaddedLabel(CharSequence label, int maxLabelLength, boolean escapeHTMLSpecialChars) {
 		
-		final String paddedLabel = String.format("%1$" + maxLabelLength + "s", label);
+		var paddedLabel = String.format("%1$" + maxLabelLength + "s", label);
 		return escapeHTMLSpecialChars ? escapeHTMLSpecialChars(paddedLabel) : paddedLabel;
 	}
 
-	static String escapeHTMLSpecialChars(final String str) {
+	static String escapeHTMLSpecialChars(String str) {
 		return str.replace("&", "&amp;").replace(" ", "&nbsp;").replace("<", "&lt;").replace(">", "&gt;");
 	}
 
-	static String stripTrailingZeroesAfterDecimal(final double d, final boolean useGrouping) {
+	static String stripTrailingZeroesAfterDecimal(double d, boolean useGrouping) {
 		
-		final DecimalFormat df = new DecimalFormat();
+		var df = new DecimalFormat();
 		df.setMinimumFractionDigits(0);
 		df.setMaximumFractionDigits(Integer.MAX_VALUE);
 		df.setGroupingUsed(useGrouping);
 		return df.format(d);
 	}
 
-	static String stripTrailingZeroesAfterDecimal(final Double d, final boolean useGrouping) {
+	static String stripTrailingZeroesAfterDecimal(Double d, boolean useGrouping) {
 		return stripTrailingZeroesAfterDecimal(d.doubleValue(), useGrouping);
 	}
 
 	/**
 	 * TODO - check if this is the right place for this method
 	 */
-	static Set<Long> getTimestampIntervalPoints(final long[] timestamps, final TimeZone timeZone, final long timeIntervalInMillis) {
+	static Set<Long> getTimestampIntervalPoints(long[] timestamps, TimeZone timeZone, long timeIntervalInMillis) {
 		
 		if (timeIntervalInMillis <= 0) {
 			throw new IllegalArgumentException("Invalid time interval: <" + timeIntervalInMillis + ">. Time interval must be a positive value");
 		}
 
-		long minTime = Long.MAX_VALUE;
-		long maxTime = Long.MIN_VALUE;
+		var minTime = Long.MAX_VALUE;
+		var maxTime = Long.MIN_VALUE;
 
-		for (final long timestamp : timestamps) {
+		for (var timestamp : timestamps) {
 			if (timestamp < minTime) {
 				minTime = timestamp;
 			}
@@ -183,9 +183,9 @@ final class Utils {
 			}
 		}
 
-		final long flooredMinTime = getStartOfHour(minTime, timeZone);
+		var flooredMinTime = getStartOfHour(minTime, timeZone);
 
-		final Set<Long> timestampIntervalPoints = new HashSet<>();
+		Set<Long> timestampIntervalPoints = new HashSet<>();
 		for (long point = flooredMinTime, interval = timeIntervalInMillis; point <= (maxTime + interval); point += interval) {
 			timestampIntervalPoints.add(point);
 		}
@@ -193,16 +193,16 @@ final class Utils {
 		return timestampIntervalPoints;
 	}
 
-	static Set<Double> toHashSet(final double[] doubles) {
-		final Set<Double> set = new HashSet<>(doubles.length);
-		for (final double d : doubles) {
+	static Set<Double> toHashSet(double[] doubles) {
+		Set<Double> set = new HashSet<>(doubles.length);
+		for (var d : doubles) {
 			set.add(d);
 		}
 		return set;
 	}
 
-	static Long getStartOfDay(final long timestamp, final TimeZone timeZone) {
-		final Calendar calendar = Calendar.getInstance();
+	static Long getStartOfDay(long timestamp, TimeZone timeZone) {
+		var calendar = Calendar.getInstance();
 		calendar.setTimeZone(timeZone);
 		calendar.setTimeInMillis(timestamp);
 		calendar.set(Calendar.HOUR_OF_DAY, 0);
@@ -213,8 +213,8 @@ final class Utils {
 		return calendar.getTimeInMillis();
 	}
 
-	static long getStartOfHour(final long timestamp, final TimeZone timeZone) {
-		final Calendar calendar = Calendar.getInstance();
+	static long getStartOfHour(long timestamp, TimeZone timeZone) {
+		var calendar = Calendar.getInstance();
 		calendar.setTimeZone(timeZone);
 		calendar.setTimeInMillis(timestamp);
 		calendar.set(Calendar.MINUTE, 0);
@@ -223,29 +223,29 @@ final class Utils {
 		return calendar.getTimeInMillis();
 	}
 
-	static double[] primArr(final Collection<Double> x) {
-		final double[] data = new double[x.size()];
+	static double[] primArr(Collection<Double> x) {
+		var data = new double[x.size()];
 
-		int i = 0;
-		for (final double d : x) {
+		var i = 0;
+		for (double d : x) {
 			data[i++] = d;
 		}
 		return data;
 	}
 
-	static double sum(final double[] data) {
+	static double sum(double[] data) {
 		double sum = 0;
-		for (final double d : data) {
+		for (var d : data) {
 			sum += d;
 		}
 		return sum;
 	}
 
-	static double[] minMax(final double[] data) {
-		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
+	static double[] minMax(double[] data) {
+		var min = Double.MAX_VALUE;
+		var max = Double.MIN_VALUE;
 
-		for (final double d : data) {
+		for (var d : data) {
 			if (d > max) {
 				max = d;
 			}
@@ -258,11 +258,11 @@ final class Utils {
 		return new double[] { min, max };
 	}
 
-	static double[] minMax(final Collection<Double> data) {
-		double min = Double.MAX_VALUE;
-		double max = Double.MIN_VALUE;
+	static double[] minMax(Collection<Double> data) {
+		var min = Double.MAX_VALUE;
+		var max = Double.MIN_VALUE;
 
-		for (final double d : data) {
+		for (double d : data) {
 			if (d > max) {
 				max = d;
 			}
@@ -275,46 +275,46 @@ final class Utils {
 		return new double[] { min, max };
 	}
 
-	static double getMedian(final double[] sortedData) {
-		final int n = sortedData.length;
+	static double getMedian(double[] sortedData) {
+		var n = sortedData.length;
 
-		final double median;
+		double median;
 		if ((n % 2) == 0) {
-			final int k = (n / 2);
+			var k = (n / 2);
 			median = (sortedData[k - 1] + sortedData[k]) / 2;
 		} else {
-			final int k = (n + 1) / 2;
+			var k = (n + 1) / 2;
 			median = sortedData[k - 1];
 		}
 		return median;
 	}
 
-	static double[] sort(final double[] data) {
-		final double[] copy = Arrays.copyOf(data, data.length);
+	static double[] sort(double[] data) {
+		var copy = Arrays.copyOf(data, data.length);
 		Arrays.sort(copy);
 		return copy;
 	}
 
-	static long[] sort(final long[] data) {
-		final long[] copy = Arrays.copyOf(data, data.length);
+	static long[] sort(long[] data) {
+		var copy = Arrays.copyOf(data, data.length);
 		Arrays.sort(copy);
 		return copy;
 	}
 
-	static Percentiles getPercentiles(final double[] sortedData, final double[] keys, final String valueUnit) {
+	static Percentiles getPercentiles(double[] sortedData, double[] keys, String valueUnit) {
 		
-		final double[] sortedKeys = Utils.sort(keys);
+		var sortedKeys = Utils.sort(keys);
 
-		final int n = sortedKeys.length;
+		var n = sortedKeys.length;
 
-		final double[] result = new double[n];
-		final double[] validKeys = new double[n];
-		int k = 0;
+		var result = new double[n];
+		var validKeys = new double[n];
+		var k = 0;
 
-		for (final double key : sortedKeys) {
+		for (var key : sortedKeys) {
 			try {
 				result[k] = Utils.getPthPercentile(sortedData, key);
-			} catch (final IllegalPercentileKeyException e) {
+			} catch (IllegalPercentileKeyException e) {
 				continue; // ignore this key and proceed to other keys
 			}
 
@@ -332,30 +332,30 @@ final class Utils {
 	 * @throws IllegalArgumentException
 	 *             if percentile can not be calculated for <code>p</code>
 	 */
-	static double getPthPercentile(final double[] sortedData, final double p) {
-		final int n = sortedData.length;
+	static double getPthPercentile(double[] sortedData, double p) {
+		var n = sortedData.length;
 
-		final double pos = (n * (p / 100)) + 0.5; // TODO - check if this is the correct way
-		final double integerPart = Math.floor(pos);
-		final int index = ((int) integerPart) - 1; // array index begins at 0
+		var pos = (n * (p / 100)) + 0.5; // TODO - check if this is the correct way
+		var integerPart = Math.floor(pos);
+		var index = ((int) integerPart) - 1; // array index begins at 0
 
 		if (index < 0) {
 			throw new IllegalPercentileKeyException(n, p);
 		}
 
-		final double fraction = pos - integerPart;
+		var fraction = pos - integerPart;
 
-		final double x = sortedData[index];
+		var x = sortedData[index];
 
-		final double result;
+		double result;
 
 		if ((fraction == 0) || (index == (n - 1))) {
 			result = x;
 		} else {
 			// interpolate
 
-			final double y = sortedData[index + 1];
-			final double diff = y - x;
+			var y = sortedData[index + 1];
+			var diff = y - x;
 
 			result = x + (fraction * diff);
 		}
@@ -367,7 +367,7 @@ final class Utils {
 		
 		private static final long serialVersionUID = -2793561757886762344L;
 
-		IllegalPercentileKeyException(final int n, final double p) {
+		IllegalPercentileKeyException(int n, double p) {
 			super("n=" + n + ", p=" + p);
 		}
 	}
@@ -380,33 +380,33 @@ final class Utils {
 		throw new UnsupportedOperationException("Not implemented yet");
 	}
 
-	static double[] zScores(final double[] data, final double mean, final double stdDeviation) {
-		final int n = data.length;
+	static double[] zScores(double[] data, double mean, double stdDeviation) {
+		var n = data.length;
 
-		final double[] zscores = new double[n];
-		for (int i = 0; i < n; i++) {
+		var zscores = new double[n];
+		for (var i = 0; i < n; i++) {
 			zscores[i] = (data[i] - mean) / stdDeviation;
 		}
 		return zscores;
 	}
 
-	static double[] getValuesForIndices(final int[] indices, final double[] data) {
-		final int n = indices.length;
-		final double[] result = new double[n];
+	static double[] getValuesForIndices(int[] indices, double[] data) {
+		var n = indices.length;
+		var result = new double[n];
 
-		for (int i = 0; i < n; i++) {
-			final int index = indices[i];
+		for (var i = 0; i < n; i++) {
+			var index = indices[i];
 			result[i] = data[index];
 		}
 		return result;
 	}
 
-	static int[] getIndicesOfValuesGreaterThan(final double threshold, final double[] values) {
-		final int n = values.length;
-		final int[] indices = new int[n];
+	static int[] getIndicesOfValuesGreaterThan(double threshold, double[] values) {
+		var n = values.length;
+		var indices = new int[n];
 
-		int c = 0;
-		for (int i = 0; i < n; i++) {
+		var c = 0;
+		for (var i = 0; i < n; i++) {
 			if (values[i] > threshold) {
 				indices[c++] = i;
 			}
@@ -415,36 +415,36 @@ final class Utils {
 		return Arrays.copyOf(indices, c);
 	}
 
-	static double[] toDoubles(final int[] ints) {
+	static double[] toDoubles(int[] ints) {
 
-		final int len = ints.length;
-		final double[] doubles = new double[len];
+		var len = ints.length;
+		var doubles = new double[len];
 
-		for (int i = 0; i < len; i++) {
+		for (var i = 0; i < len; i++) {
 			doubles[i] = safeToDouble(ints[i]);
 		}
 		return doubles;
 	}
 
-	static double[] toDoubles(final long[] longs) {
+	static double[] toDoubles(long[] longs) {
 
-		final int len = longs.length;
-		final double[] doubles = new double[len];
+		var len = longs.length;
+		var doubles = new double[len];
 
-		for (int i = 0; i < len; i++) {
+		for (var i = 0; i < len; i++) {
 			doubles[i] = safeToDouble(longs[i]);
 		}
 		return doubles;
 	}
 
-	static MultiSpanSVGText createMultiSpanSVGText(final String multiLineText, final double x, final double y, final double fontSize, final String color) {
+	static MultiSpanSVGText createMultiSpanSVGText(String multiLineText, double x, double y, double fontSize, String color) {
 		
-		final List<String> lines = Utils.lines(multiLineText);
-		final int spanCount = lines.size();
+		var lines = Utils.lines(multiLineText);
+		var spanCount = lines.size();
 
-		final String NL = System.lineSeparator();
+		var NL = System.lineSeparator();
 
-		final StringBuilder label = new StringBuilder();
+		var label = new StringBuilder();
 		label.append("<text text-anchor=\"middle\"");
 		if (color != null) {
 			label.append(" fill=\"").append(color).append("\"");
@@ -452,8 +452,8 @@ final class Utils {
 		label.append(">");
 		label.append(NL);
 
-		for (int i = 0; i < spanCount; i++) {
-			final String line = lines.get(i);
+		for (var i = 0; i < spanCount; i++) {
+			var line = lines.get(i);
 			label.append("<tspan x=\"").append(x).append("\" y=\"").append(y + (i * fontSize)).append("\">").append(line).append("</tspan>").append(NL);
 		}
 
@@ -462,39 +462,39 @@ final class Utils {
 		return new MultiSpanSVGText(label, spanCount);
 	}
 
-	static boolean skipLabel(final int currentLabelIndex, final int totalLabelCount, final int labelSkipCount) {
+	static boolean skipLabel(int currentLabelIndex, int totalLabelCount, int labelSkipCount) {
 		
-		final boolean dontSkipLabel = 
+		var dontSkipLabel =
 				(currentLabelIndex == 0) || (currentLabelIndex == totalLabelCount) || (((currentLabelIndex - 1) % (labelSkipCount + 1)) == 0);
 		
 		return !dontSkipLabel;
 	}
 
-	static String wrapInHTMLBody(final String svgString) {
+	static String wrapInHTMLBody(String svgString) {
 		
-		final String NL = System.lineSeparator();
+		var NL = System.lineSeparator();
 		return "<!DOCTYPE html>" + NL + "<html>" + NL + "  <body>" + NL + svgString + NL + "  </body>" + NL + "</html>";
 	}
 
-	static void createFile(final String content, final String filePath) throws IOException {
-		try (final FileWriter fw = new FileWriter(filePath); final BufferedWriter bw = new BufferedWriter(fw)) {
+	static void createFile(String content, String filePath) throws IOException {
+		try (var fw = new FileWriter(filePath); var bw = new BufferedWriter(fw)) {
 			bw.write(content);
 		}
 	}
 
-	static List<Double> asList(final double[] data) {
+	static List<Double> asList(double[] data) {
 
-		final List<Double> l = new ArrayList<>(data.length);
-		for (final double d : data) {
+		List<Double> l = new ArrayList<>(data.length);
+		for (var d : data) {
 			l.add(d);
 		}
 		return l;
 	}
 
-	static double[] createIntervalPoints(final Collection<Double> data, final int nIntervalPoints) {
-		final double[] minMax = minMax(data);
-		final double min = minMax[0];
-		final double max = minMax[1];
+	static double[] createIntervalPoints(Collection<Double> data, int nIntervalPoints) {
+		var minMax = minMax(data);
+		var min = minMax[0];
+		var max = minMax[1];
 
 		return createIntervalPoints(min, max, nIntervalPoints);
 	}
@@ -505,7 +505,7 @@ final class Utils {
 	 * 
 	 * @see http://stackoverflow.com/questions/326679/choosing-an-attractive-linear-scale-for-a-graphs-y-axis
 	 */
-	static double[] createIntervalPoints(final double min, final double max, final int nIntervalPoints) {
+	static double[] createIntervalPoints(double min, double max, int nIntervalPoints) {
 
 		if (min < 0) {
 			throw new IllegalArgumentException("min = <" + min + ">");
@@ -523,13 +523,13 @@ final class Utils {
 			throw new IllegalArgumentException("Too few interval points <" + nIntervalPoints + ">");
 		}
 
-		final BigDecimal minBD = BigDecimal.valueOf(min);
-		final BigDecimal maxBD;
+		var minBD = BigDecimal.valueOf(min);
+		BigDecimal maxBD;
 
 		if (min == max) {
 			if ((min > 0) && (min < 1)) {
-				final int scale = minBD.scale();
-				final BigDecimal pow = TEN.pow(scale);
+				var scale = minBD.scale();
+				var pow = TEN.pow(scale);
 				maxBD = minBD.multiply(pow).add(ONE).divide(pow);
 			} else {
 				maxBD = minBD.add(ONE);
@@ -538,21 +538,21 @@ final class Utils {
 			maxBD = BigDecimal.valueOf(max);
 		}
 
-		final BigDecimal range = maxBD.subtract(minBD);
-		final BigDecimal interval = range.divide(BigDecimal.valueOf(nIntervalPoints), MathContext.DECIMAL128);
+		var range = maxBD.subtract(minBD);
+		var interval = range.divide(BigDecimal.valueOf(nIntervalPoints), MathContext.DECIMAL128);
 
 		// TODO - check if casting to int is OK.
-		final int x = Utils.safeToInt(Math.floor(Math.log10(interval.doubleValue()) + 1));
+		var x = Utils.safeToInt(Math.floor(Math.log10(interval.doubleValue()) + 1));
 
-		final BigDecimal tenPowerX = x < 0 ? ONE.divide(TEN.pow(x * -1)) : TEN.pow(x);
+		var tenPowerX = x < 0 ? ONE.divide(TEN.pow(x * -1)) : TEN.pow(x);
 
-		final double y = interval.divide(tenPowerX).doubleValue();
+		var y = interval.divide(tenPowerX).doubleValue();
 
 		if ((y < 0.1) || (y > 1.0)) {
 			throw new RuntimeException("Internal error: " + y);
 		}
 
-		final double z;
+		double z;
 
 		if (y == 0.1) {
 			z = 0.1;
@@ -581,17 +581,17 @@ final class Utils {
 		}
 
 		// Necessary to use BigDecimal to keep precision
-		final BigDecimal niceInterval = BigDecimal.valueOf(z).multiply(tenPowerX);
+		var niceInterval = BigDecimal.valueOf(z).multiply(tenPowerX);
 
-		final double[] intervalPoints = new double[nIntervalPoints];
+		var intervalPoints = new double[nIntervalPoints];
 
-		final BigDecimal niceMin = niceInterval.multiply(minBD.divide(niceInterval, 0, RoundingMode.FLOOR));
+		var niceMin = niceInterval.multiply(minBD.divide(niceInterval, 0, RoundingMode.FLOOR));
 
 		intervalPoints[0] = niceMin.doubleValue();
-		BigDecimal prev = niceMin;
+		var prev = niceMin;
 
-		for (int i = 1; i < intervalPoints.length; i++) {
-			final BigDecimal current = prev.add(niceInterval);
+		for (var i = 1; i < intervalPoints.length; i++) {
+			var current = prev.add(niceInterval);
 			intervalPoints[i] = current.doubleValue();
 			prev = current;
 		}
@@ -599,12 +599,12 @@ final class Utils {
 		return intervalPoints;
 	}
 
-	static <T> T parseType(final Class<T> type, final String s) throws ParseException {
+	static <T> T parseType(Class<T> type, String s) throws ParseException {
 
-		boolean internalError = false;
+		var internalError = false;
 
 		try {
-			final Object value;
+			Object value;
 
 			if ((type == Boolean.class) || (type == boolean.class)) {
 				value = Boolean.valueOf(s);
@@ -651,10 +651,10 @@ final class Utils {
 					|| (type == Float[].class) || (type == float[].class) || (type == Double[].class) || (type == double[].class)
 					|| (type == TimeUnit[].class) || (type == ColorRampScheme[].class) || (type == TimeZone[].class)) {
 
-				final String[] elements = s.split("\\s*,\\s*", -1);
-				final int len = elements.length;
+				var elements = s.split("\\s*,\\s*", -1);
+				var len = elements.length;
 				value = Array.newInstance(type.getComponentType(), len);
-				for (int i = 0; i < len; i++) {
+				for (var i = 0; i < len; i++) {
 					Array.set(value, i, parseType(type.getComponentType(), elements[i]));
 				}
 			} else {
@@ -664,7 +664,7 @@ final class Utils {
 
 			return type.cast(value);
 
-		} catch (final Exception e) {
+		} catch (Exception e) {
 
 			if ((e instanceof ParseException) || internalError) {
 				throw e;
@@ -674,9 +674,9 @@ final class Utils {
 		}
 	}
 
-	static String toShortForm(final TimeUnit timeUnit) {
+	static String toShortForm(TimeUnit timeUnit) {
 
-		final String result;
+		String result;
 
 		switch (timeUnit) {
 		case DAYS:
@@ -708,16 +708,16 @@ final class Utils {
 		return result;
 	}
 
-	static String toDisplayString(final double value, final int precision, final boolean useGroupSeparator) {
+	static String toDisplayString(double value, int precision, boolean useGroupSeparator) {
 
-		final String result;
+		String result;
 
 		if (Double.isNaN(value)) {
 			result = String.valueOf(value);
 			
 		} else {
 
-			final StringBuilder format = new StringBuilder("%1$");
+			var format = new StringBuilder("%1$");
 
 			if (useGroupSeparator) {
 				format.append(',');
@@ -731,7 +731,7 @@ final class Utils {
 		return result;
 	}
 
-	static String repeat(final String str, final int n) {
+	static String repeat(String str, int n) {
 
 		Objects.requireNonNull(str);
 
@@ -739,15 +739,15 @@ final class Utils {
 			throw new IllegalArgumentException("n (" + n + ") is less than 1");
 		}
 
-		final StringBuilder b = new StringBuilder();
+		var b = new StringBuilder();
 
-		for (int i = 0; i < n; i++) {
+		for (var i = 0; i < n; i++) {
 			b.append(str);
 		}
 		return b.toString();
 	}
 
-	static int safeToInt(final double d) {
+	static int safeToInt(double d) {
 		
 		if ((d > Integer.MAX_VALUE) || (d < Integer.MIN_VALUE)) {
 			throw new RuntimeException("Internal error: " + d);
@@ -756,9 +756,9 @@ final class Utils {
 		return (int) d;
 	}
 
-	static double safeToDouble(final long l) {
+	static double safeToDouble(long l) {
 
-		final double d = l;
+		double d = l;
 
 		if (((long) d) != l) {
 			throw new RuntimeException("Internal error: " + l);
@@ -767,15 +767,15 @@ final class Utils {
 		return d;
 	}
 
-	static long[] toOneDimArray(final Long[][] matrix) {
+	static long[] toOneDimArray(Long[][] matrix) {
 
-		final int rowCount = matrix.length;
-		final int colCount = matrix[0].length;
+		var rowCount = matrix.length;
+		var colCount = matrix[0].length;
 
-		final long[] array = new long[rowCount * colCount];
+		var array = new long[rowCount * colCount];
 
 		for (int r = 0, i = 0; r < rowCount; r++) {
-			for (int c = 0; c < colCount; c++) {
+			for (var c = 0; c < colCount; c++) {
 				array[i++] = matrix[r][c];
 			}
 		}
@@ -783,28 +783,28 @@ final class Utils {
 		return array;
 	}
 
-	static <T> void fillMatrix(final T[] sourceArray, final T[][] targetMatrix) {
+	static <T> void fillMatrix(T[] sourceArray, T[][] targetMatrix) {
 
-		final int length = sourceArray.length;
-		final int rowCount = targetMatrix.length;
-		final int colCount = targetMatrix[0].length;
+		var length = sourceArray.length;
+		var rowCount = targetMatrix.length;
+		var colCount = targetMatrix[0].length;
 
 		if (length != (rowCount * colCount)) {
 			throw new RuntimeException("Internal error: length = " + length + ", rowCount = " + rowCount + ", colCount = " + colCount);
 		}
 
 		for (int r = 0, i = 0; r < rowCount; r++) {
-			for (int c = 0; c < colCount; c++) {
+			for (var c = 0; c < colCount; c++) {
 				targetMatrix[r][c] = sourceArray[i++];
 			}
 		}
 	}
 
-	static double getMax(final double[] values) {
+	static double getMax(double[] values) {
 
-		double max = Double.MIN_VALUE;
+		var max = Double.MIN_VALUE;
 
-		for (double value : values) {
+		for (var value : values) {
 			if (value > max) {
 				max = value;
 			}
@@ -812,18 +812,18 @@ final class Utils {
 		return max;
 	}
 
-	static Double[] getNonZeroMinMax(final double[] sorted) {
+	static Double[] getNonZeroMinMax(double[] sorted) {
 
-		final double min = sorted[0];
-		final double max = sorted[sorted.length - 1];
+		var min = sorted[0];
+		var max = sorted[sorted.length - 1];
 
-		final Double nonZeroMin;
+		Double nonZeroMin;
 
 		if (min == 0) {
 			Double nzmi = null;
 
-			for (int i = 1; i < sorted.length; i++) {
-				final double d = sorted[i];
+			for (var i = 1; i < sorted.length; i++) {
+				var d = sorted[i];
 				if (d != 0) {
 					nzmi = d;
 					break;
@@ -835,13 +835,13 @@ final class Utils {
 			nonZeroMin = min;
 		}
 
-		final Double nonZeroMax;
+		Double nonZeroMax;
 
 		if (max == 0) {
 			Double nzma = null;
 
-			for (int i = sorted.length - 2; i >= 0; i--) {
-				final double d = sorted[i];
+			for (var i = sorted.length - 2; i >= 0; i--) {
+				var d = sorted[i];
 				if (d != 0) {
 					nzma = d;
 					break;

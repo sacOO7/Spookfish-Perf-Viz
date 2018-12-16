@@ -45,22 +45,22 @@ public enum ColorRampScheme {
 	private final String[] foregroundColors;
 	private final String backgroundColor;
 
-	ColorRampScheme(final ColorPalette palette, final int nDataClasses) {
+	ColorRampScheme(ColorPalette palette, int nDataClasses) {
 		this(palette, nDataClasses, WHITE);
 	}
 
-	ColorRampScheme(final ColorPalette palette, final int nDataClasses, final String backgroundColor) {
+	ColorRampScheme(ColorPalette palette, int nDataClasses, String backgroundColor) {
 		this(palette.getColors(), nDataClasses, backgroundColor);
 	}
 
-	ColorRampScheme(final String[] foregroundColorSet, final int nDataClasses, final String backgroundColor) {
+	ColorRampScheme(String[] foregroundColorSet, int nDataClasses, String backgroundColor) {
 		this(Arrays.copyOfRange(foregroundColorSet, (foregroundColorSet.length - nDataClasses), foregroundColorSet.length), backgroundColor);
 	}
 
-	ColorRampScheme(final String[] foregroundColors, final String backgroundColor) {
+	ColorRampScheme(String[] foregroundColors, String backgroundColor) {
 
-		for (String fc : foregroundColors) {
-			if (Objects.equals(fc, backgroundColor)) {
+		for (var foregroundColor : foregroundColors) {
+			if (Objects.equals(foregroundColor, backgroundColor)) {
 				throw new RuntimeException("Invalid color scheme: One of the foreground colors is same as the background color.");
 			}
 		}

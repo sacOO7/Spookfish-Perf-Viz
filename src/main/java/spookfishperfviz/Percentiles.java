@@ -30,7 +30,7 @@ final class Percentiles {
 	private final double[] values;
 	private final String valueHeader;
 
-	Percentiles(final double[] keys, final double[] values, final String valueUnit) {
+	Percentiles(double[] keys, double[] values, String valueUnit) {
 		
 		if (keys.length != values.length) {
 			throw new IllegalArgumentException();
@@ -41,7 +41,7 @@ final class Percentiles {
 		this.valueHeader = "Value (" + valueUnit + ")";
 	}
 
-	public String toSVG(final boolean wrapInHtmlBody) {
+	public String toSVG(boolean wrapInHtmlBody) {
 		return toBarChart().toSVG(wrapInHtmlBody, null);
 	}
 
@@ -51,25 +51,25 @@ final class Percentiles {
 	}
 
 	private HorizontalBarChart toBarChart() {
-		
-		final int n = this.keys.length;
 
-		final double[] keys = this.keys;
-		final double[] values = this.values;
-		final String valHeader = this.valueHeader;
+		var n = this.keys.length;
 
-		final String[] keyStrs = new String[n];
-		final String[] valueStrs = new String[n];
+		var keys = this.keys;
+		var values = this.values;
+		var valHeader = this.valueHeader;
 
-		final double[] valuesReversed = new double[n];
+		var keyStrs = new String[n];
+		var valueStrs = new String[n];
+
+		var valuesReversed = new double[n];
 
 		int kPadding = -1, vPadding = -1;
 
 		for (int i = 0, k = n - 1; i < n; i++, k--) {
 			{
-				final String keyStr = String.valueOf(keys[i]);
+				var keyStr = String.valueOf(keys[i]);
 
-				final int kLen = keyStr.length();
+				var kLen = keyStr.length();
 				if (kLen > kPadding) {
 					kPadding = kLen;
 				}
@@ -78,10 +78,10 @@ final class Percentiles {
 			}
 
 			{
-				final double value = values[i];
-				final String valueStr = Utils.toDisplayString(value, 3, true);
+				var value = values[i];
+				var valueStr = Utils.toDisplayString(value, 3, true);
 
-				final int vLen = valueStr.length();
+				var vLen = valueStr.length();
 				if (vLen > vPadding) {
 					vPadding = vLen;
 				}
@@ -93,15 +93,15 @@ final class Percentiles {
 		
 		kPadding = Math.max(kPadding, KEY_HEADER.length());
 		vPadding = Math.max(vPadding, valHeader.length());
-		
-		final String labelStringFormat = "%" + kPadding + "s    %" + vPadding + "s";
 
-		final String[] dataLabels = new String[n];
-		for (int i = 0; i < n; i++) {
+		var labelStringFormat = "%" + kPadding + "s    %" + vPadding + "s";
+
+		var dataLabels = new String[n];
+		for (var i = 0; i < n; i++) {
 			dataLabels[i] = String.format(labelStringFormat, keyStrs[i], valueStrs[i]);
 		}
-		
-		final String headerLabel = String.format(labelStringFormat, KEY_HEADER, valHeader);
+
+		var headerLabel = String.format(labelStringFormat, KEY_HEADER, valHeader);
 
 		return HorizontalBarChart.create(valuesReversed, dataLabels, headerLabel);
 	}

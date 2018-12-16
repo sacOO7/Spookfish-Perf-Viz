@@ -31,15 +31,15 @@ abstract class Histogram<C extends Comparable<C>> {
 		//
 	}
 
-	static Histogram<Double> create(final double[] data, final double[] intervalPoints) {
+	static Histogram<Double> create(double[] data, double[] intervalPoints) {
 		return Histogram2.newInstance(data, intervalPoints, false);
 	}
 
-	static Histogram<Double> create(final double[] data, final int nIntervalPoints) {
+	static Histogram<Double> create(double[] data, int nIntervalPoints) {
 		return Histogram2.newInstance(data, nIntervalPoints, false);
 	}
 
-	static <T extends Comparable<T>> Histogram<T> create(final Collection<T> data, final Set<T> intervalPoints) {
+	static <T extends Comparable<T>> Histogram<T> create(Collection<T> data, Set<T> intervalPoints) {
 		return Histogram2.newInstance(data, intervalPoints, false);
 	}
 

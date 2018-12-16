@@ -27,23 +27,23 @@ import java.util.Optional;
  */
 final class Options {
 
-	static Options create(final String[] args) throws BadOptionsException {
+	static Options create(String[] args) throws BadOptionsException {
 
-		final Options options = new Options();
+		var options = new Options();
 
 		if ((args != null) && (args.length > 0)) {
 
-			for (int i = 0; i < args.length; i++) {
+			for (var i = 0; i < args.length; i++) {
 
-				final String optName;
+				String optName;
 				{
-					final String name = args[i];
+					var name = args[i];
 
 					if (name == null) {
 						throw BadOptionsException.badOptionName("Option's name is null", args, i);
 					}
 
-					final String trimmedName = name.trim();
+					var trimmedName = name.trim();
 
 					if (!trimmedName.startsWith("-")) {
 						throw BadOptionsException.badOptionName("Option's name does not start with '-'", args, i);
@@ -56,7 +56,7 @@ final class Options {
 					}
 				}
 
-				final String optValue;
+				String optValue;
 				{
 					i++;
 
@@ -74,10 +74,10 @@ final class Options {
 		return options;
 	}
 
-	private static <T> T parse(final String optionName, final String value, final Class<T> valueType) throws BadOptionsException {
+	private static <T> T parse(String optionName, String value, Class<T> valueType) throws BadOptionsException {
 		try {
 			return Utils.parseType(valueType, value);
-		} catch (final ParseException e) {
+		} catch (ParseException e) {
 			throw BadOptionsException.illegalValue(optionName, e.getMessage(), e);
 		}
 	}
@@ -88,25 +88,25 @@ final class Options {
 		this.options = new HashMap<>();
 	}
 
-	private void add(final String name, final String value) {
+	private void add(String name, String value) {
 		this.options.put(name, Optional.of(value));
 	}
 
-	<T> T getMandatory(final String optionName, final Class<T> valueType) throws BadOptionsException {
+	<T> T getMandatory(String optionName, Class<T> valueType) throws BadOptionsException {
 
-		final String value = getMandatory(optionName);
+		var value = getMandatory(optionName);
 		return parse(optionName, value, valueType);
 	}
 
-	<T> T getOptional(final String optionName, final Class<T> valueType, final T defaultValue) throws BadOptionsException {
+	<T> T getOptional(String optionName, Class<T> valueType, T defaultValue) throws BadOptionsException {
 
-		final Optional<String> optional = this.options.get(optionName);
+		var optional = this.options.get(optionName);
 		return (optional != null && optional.isPresent()) ? parse(optionName, optional.get(), valueType) : defaultValue;
 	}
 
-	private String getMandatory(final String optionName) throws BadOptionsException {
+	private String getMandatory(String optionName) throws BadOptionsException {
 
-		final Optional<String> optional = this.options.get(optionName);
+		var optional = this.options.get(optionName);
 
 		if (optional == null) {
 			throw BadOptionsException.optionNotSpecified(optionName);

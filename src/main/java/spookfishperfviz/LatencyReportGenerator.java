@@ -40,7 +40,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 import java.util.TimeZone;
 import java.util.TreeMap;
 import java.util.concurrent.TimeUnit;
@@ -62,31 +61,31 @@ public final class LatencyReportGenerator {
 
 	private static final AtomicInteger uniquifier = new AtomicInteger();
 
-	static void run(final Options options) throws Exception {
+	static void run(Options options) throws Exception {
 
-		final String ignorePattern = options.getOptional("ignorePattern", String.class, null);
-		final String parsePattern = options.getMandatory("parsePattern", String.class);
-		final String timestampPattern = options.getMandatory("timestampPattern", String.class);
-		final TimeZone inputTimeZone = options.getOptional("inputTimeZone", TimeZone.class, TimeZone.getDefault());
-		final TimeZone outputTimeZone = options.getOptional("outputTimeZone", TimeZone.class, TimeZone.getDefault());
-		final RecordParser parser = SimpleRegexBasedRecordParser.create(ignorePattern, parsePattern, timestampPattern, inputTimeZone);
+		var ignorePattern = options.getOptional("ignorePattern", String.class, null);
+		var parsePattern = options.getMandatory("parsePattern", String.class);
+		var timestampPattern = options.getMandatory("timestampPattern", String.class);
+		var inputTimeZone = options.getOptional("inputTimeZone", TimeZone.class, TimeZone.getDefault());
+		var outputTimeZone = options.getOptional("outputTimeZone", TimeZone.class, TimeZone.getDefault());
+		var parser = SimpleRegexBasedRecordParser.create(ignorePattern, parsePattern, timestampPattern, inputTimeZone);
 
-		final TimeUnit latencyUnit = options.getMandatory("latencyUnit", TimeUnit.class);
+		var latencyUnit = options.getMandatory("latencyUnit", TimeUnit.class);
 
-		final double[] histogramIntervalPoints = options.getMandatory("histogramIntervalPoints", double[].class);
-		final double[] percentilePoints = options.getMandatory("percentilePoints", double[].class);
-		final Integer heatMapMaxIntervalPoints = options.getOptional("heatMapMaxIntervalPoints", Integer.class, null);
+		var histogramIntervalPoints = options.getMandatory("histogramIntervalPoints", double[].class);
+		var percentilePoints = options.getMandatory("percentilePoints", double[].class);
+		var heatMapMaxIntervalPoints = options.getOptional("heatMapMaxIntervalPoints", Integer.class, null);
 
-		final ColorRampScheme colorRampScheme = options.getOptional("colorRampScheme", ColorRampScheme.class, ColorRampScheme.DEFAULT);
+		var colorRampScheme = options.getOptional("colorRampScheme", ColorRampScheme.class, ColorRampScheme.DEFAULT);
 
-		final String inFile = options.getMandatory("inFile", String.class);
-		final String outFile = options.getMandatory("outFile", String.class);
+		var inFile = options.getMandatory("inFile", String.class);
+		var outFile = options.getMandatory("outFile", String.class);
 
-		final int heatMapSingleAreaWidth = 20;
+		var heatMapSingleAreaWidth = 20;
 
-		final Path path;
+		Path path;
 
-		try (final Reader fr = new FileReader(inFile); final Reader source = new BufferedReader(fr)) {
+		try (Reader fr = new FileReader(inFile); Reader source = new BufferedReader(fr)) {
 			
 			path = generateReport(source, parser, latencyUnit, outputTimeZone, histogramIntervalPoints, percentilePoints, 
 									heatMapMaxIntervalPoints, heatMapSingleAreaWidth, colorRampScheme, outFile);
@@ -95,72 +94,72 @@ public final class LatencyReportGenerator {
 		System.out.println("Report generated at <" + path + ">");
 	}
 
-	public static Path generateReport(	final Reader source,
-										final RecordParser parser, 
-										final TimeUnit latencyUnit,
-										final TimeZone outputTimeZone, 
-										final double[] intervalPointsForLatencyHistogram, 
-										final double[] percentileKeys, 
-										final Integer maxIntervalPointsForLatencyDensity,
-										final double heatMapSingleAreaWidth, 
-										final ColorRampScheme colorRampScheme, 
-										final String outputFilePath) throws IOException {
+	public static Path generateReport(	Reader source,
+										RecordParser parser,
+										TimeUnit latencyUnit,
+										TimeZone outputTimeZone,
+										double[] intervalPointsForLatencyHistogram,
+										double[] percentileKeys,
+										Integer maxIntervalPointsForLatencyDensity,
+										double heatMapSingleAreaWidth,
+										ColorRampScheme colorRampScheme,
+										String outputFilePath) throws IOException {
 		
-		final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = stats -> {
+		LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = stats -> {
 
-			final TimeSeriesLatencyDensity density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, maxIntervalPointsForLatencyDensity);
+			var density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, maxIntervalPointsForLatencyDensity);
 			return stats.toHtml(intervalPointsForLatencyHistogram, percentileKeys, density, heatMapSingleAreaWidth, colorRampScheme);
 		};
 
 		return generateReport(source, parser, latencyUnit, outputTimeZone, latencyStatsToHtmlFunc, outputFilePath);
 	}
 
-	public static Path generateReport(	final Reader source,
-										final RecordParser parser, 
-										final TimeUnit latencyUnit,
-										final TimeZone outputTimeZone, 
-										final double[] intervalPointsForLatencyHistogram, 
-										final double[] percentileKeys, 
-										final double minIntervalPointForLatencyDensity, 
-										final double maxIntervalPointForLatencyDensity, 
-										final Integer maxIntervalPointsForLatencyDensity, 
-										final double heatMapSingleAreaWidth, 
-										final ColorRampScheme colorRampScheme, 
-										final String outputFilePath) throws IOException {
+	public static Path generateReport(	Reader source,
+										RecordParser parser,
+										TimeUnit latencyUnit,
+										TimeZone outputTimeZone,
+										double[] intervalPointsForLatencyHistogram,
+										double[] percentileKeys,
+										double minIntervalPointForLatencyDensity,
+										double maxIntervalPointForLatencyDensity,
+										Integer maxIntervalPointsForLatencyDensity,
+										double heatMapSingleAreaWidth,
+										ColorRampScheme colorRampScheme,
+										String outputFilePath) throws IOException {
 		
-		final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = stats -> {
+		LatencyStatsToHtmlFunc latencyStatsToHtmlFunc = stats -> {
 
-			final TimeSeriesLatencyDensity density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, minIntervalPointForLatencyDensity, maxIntervalPointForLatencyDensity, maxIntervalPointsForLatencyDensity);
+			var density = TimeSeriesLatencyDensity.create(stats.getLatencies(), stats.getTimestamps(), outputTimeZone, minIntervalPointForLatencyDensity, maxIntervalPointForLatencyDensity, maxIntervalPointsForLatencyDensity);
 			return stats.toHtml(intervalPointsForLatencyHistogram, percentileKeys, density, heatMapSingleAreaWidth, colorRampScheme);
 		};
 
 		return generateReport(source, parser, latencyUnit, outputTimeZone, latencyStatsToHtmlFunc, outputFilePath);
 	}
 
-	private static Path generateReport(	final Reader source,
-										final RecordParser parser, 
-										final TimeUnit latencyUnit, 
-										final TimeZone outputTimeZone, 
-										final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc, 
-										final String outputFilePath) throws IOException {
+	private static Path generateReport(	Reader source,
+										RecordParser parser,
+										TimeUnit latencyUnit,
+										TimeZone outputTimeZone,
+										LatencyStatsToHtmlFunc latencyStatsToHtmlFunc,
+										String outputFilePath) throws IOException {
 
-		try (RecordIterator recordIterator = RecordIterator.create(source, parser))
+		try (var recordIterator = RecordIterator.create(source, parser))
 		{
-			final Path reportFilePath;
+			Path reportFilePath;
 
 			if (false) {
 
 				// TODO - enable after adding feature to read from raw file if the
 				// contents of input file have not changed since last read.
 
-				final File rawFile = createRawFile(recordIterator);
+				var rawFile = createRawFile(recordIterator);
 				reportFilePath = generateReport(rawFile, latencyUnit, outputTimeZone, latencyStatsToHtmlFunc, outputFilePath);
 
 			} else {
-				final Map<String, List<TimestampAndLatency>> data = new TreeMap<>();
+				Map<String, List<TimestampAndLatency>> data = new TreeMap<>();
 
 				while (recordIterator.hasNext()) {
-					final Record record = recordIterator.next();
+					var record = recordIterator.next();
 					addRecord(record.getEventName(), record.getTimestamp(), record.getLatency(), data);
 				}
 
@@ -171,27 +170,27 @@ public final class LatencyReportGenerator {
 		}
 	}
 
-	private static Path generateReport(	final File rawDataFile,
-										final TimeUnit latencyUnit, 
-										final TimeZone outputTimeZone, 
-										final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc, 
-										final String outputFilePath) throws IOException {
+	private static Path generateReport(	File rawDataFile,
+										TimeUnit latencyUnit,
+										TimeZone outputTimeZone,
+										LatencyStatsToHtmlFunc latencyStatsToHtmlFunc,
+										String outputFilePath) throws IOException {
 		
 		return generateReport(parseRawFile(rawDataFile), latencyUnit, outputTimeZone, latencyStatsToHtmlFunc, outputFilePath);
 	}
 
-	private static Path generateReport(	final Map<String, List<TimestampAndLatency>> data, 
-										final TimeUnit latencyUnit, 
-										final TimeZone outputTimeZone, 
-										final LatencyStatsToHtmlFunc latencyStatsToHtmlFunc, 
-										final String reportFilePath) throws IOException {
+	private static Path generateReport(	Map<String, List<TimestampAndLatency>> data,
+										TimeUnit latencyUnit,
+										TimeZone outputTimeZone,
+										LatencyStatsToHtmlFunc latencyStatsToHtmlFunc,
+										String reportFilePath) throws IOException {
 
-		final String NL = System.lineSeparator();
+		var NL = System.lineSeparator();
 
-		final List<TimestampAndLatency> latenciesSuperSet = new ArrayList<>();
+		List<TimestampAndLatency> latenciesSuperSet = new ArrayList<>();
 
-		final StringBuilder linksHtml = new StringBuilder();
-		final StringBuilder contentsHtml = new StringBuilder();
+		var linksHtml = new StringBuilder();
+		var contentsHtml = new StringBuilder();
 
 		linksHtml.append("<table style=\"border:1px solid black; font-size: 14px;\">");
 		linksHtml.append("<tr>").append(NL);
@@ -211,15 +210,15 @@ public final class LatencyReportGenerator {
 		linksHtml.append(createHtmlColumnHeaderWithLink("Kurtosis", "http://en.wikipedia.org/wiki/Kurtosis")).append(NL);
 		linksHtml.append("</tr>").append(NL);
 
-		final TreeMap<Double, String> linkHtmlsSortedByMedian = new TreeMap<>();
+		TreeMap<Double, String> linkHtmlsSortedByMedian = new TreeMap<>();
 
-		for (final Entry<String, List<TimestampAndLatency>> entry : data.entrySet()) {
-			final String eventType = entry.getKey();
-			final List<TimestampAndLatency> latencies = entry.getValue();
+		for (var entry : data.entrySet()) {
+			var eventType = entry.getKey();
+			var latencies = entry.getValue();
 
-			final Stats stats = Stats.create(latencies, latencyUnit, outputTimeZone, eventType);
-			final LatencyStats latencyStats = stats.getLatencyStats();
-			final String[] h = latencyStatsToHtmlFunc.toHtml(latencyStats);
+			var stats = Stats.create(latencies, latencyUnit, outputTimeZone, eventType);
+			var latencyStats = stats.getLatencyStats();
+			var h = latencyStatsToHtmlFunc.toHtml(latencyStats);
 
 			contentsHtml.append(h[1]).append(NL);
 			contentsHtml.append("<br/><br/>").append(NL);
@@ -230,9 +229,9 @@ public final class LatencyReportGenerator {
 		}
 
 		{
-			final Stats stats = Stats.create(latenciesSuperSet, latencyUnit, outputTimeZone, "All APIs combined");
-			final LatencyStats latencyStats = stats.getLatencyStats();
-			final String[] h = latencyStatsToHtmlFunc.toHtml(latencyStats);
+			var stats = Stats.create(latenciesSuperSet, latencyUnit, outputTimeZone, "All APIs combined");
+			var latencyStats = stats.getLatencyStats();
+			var h = latencyStatsToHtmlFunc.toHtml(latencyStats);
 
 			contentsHtml.append(h[1]).append(NL);
 			contentsHtml.append("<br/><br/>");
@@ -240,15 +239,15 @@ public final class LatencyReportGenerator {
 			linksHtml.append(h[0]).append(NL);
 		}
 
-		for (final String linkHtml : linkHtmlsSortedByMedian.descendingMap().values()) {
+		for (var linkHtml : linkHtmlsSortedByMedian.descendingMap().values()) {
 			linksHtml.append(linkHtml).append(NL);
 		}
 
 		linksHtml.append("</table>");
-		
-		final String advertisementHtml = "This report was generated by <a href=\"https://github.com/rahulbakale/Spookfish-Perf-Viz\" target=\"_blank\">Spookfish-Perf-Viz, a free and open-source tool</a>, developed by Rahul Bakale.<br></br>";
 
-		String perfStatsHtml =
+		var advertisementHtml = "This report was generated by <a href=\"https://github.com/rahulbakale/Spookfish-Perf-Viz\" target=\"_blank\">Spookfish-Perf-Viz, a free and open-source tool</a>, developed by Rahul Bakale.<br></br>";
+
+		var perfStatsHtml =
 				"<!DOCTYPE html>" + NL +
 				"<html>" + NL +
 				"<body>" + NL +
@@ -267,24 +266,24 @@ public final class LatencyReportGenerator {
 		 */
 	}
 
-	private static Map<String, List<TimestampAndLatency>> parseRawFile(final File rawFile) throws IOException {
-		final Map<String, List<TimestampAndLatency>> data = new TreeMap<>();
+	private static Map<String, List<TimestampAndLatency>> parseRawFile(File rawFile) throws IOException {
+		Map<String, List<TimestampAndLatency>> data = new TreeMap<>();
 
-		try (final FileInputStream fis = new FileInputStream(rawFile);
-				final BufferedInputStream bis = new BufferedInputStream(fis);
-				final DataInputStream dis = new DataInputStream(bis)) {
+		try (var fis = new FileInputStream(rawFile);
+			 var bis = new BufferedInputStream(fis);
+			 var dis = new DataInputStream(bis)) {
 
 			while (true) {
 
-				final String eventType;
+				String eventType;
 				try {
 					eventType = dis.readUTF();
-				} catch (final EOFException e) {
+				} catch (EOFException e) {
 					break;
 				}
 
-				final long timestamp = dis.readLong();
-				final double latency = dis.readDouble();
+				var timestamp = dis.readLong();
+				var latency = dis.readDouble();
 
 				addRecord(eventType, timestamp, latency, data);
 			}
@@ -293,44 +292,45 @@ public final class LatencyReportGenerator {
 		return data;
 	}
 
-	private static void addRecord(	final String eventType, 
-									final long timestamp, 
-									final double latency, 
-									final Map<String, List<TimestampAndLatency>> data) {
+	private static void addRecord(	String eventType,
+									long timestamp,
+									double latency,
+									Map<String, List<TimestampAndLatency>> data) {
 
 		data
 				.computeIfAbsent(eventType, key -> new ArrayList<>())
 				.add(new TimestampAndLatency(timestamp, latency));
 	}
 
-	private static File createRawFile(final RecordIterator recordIterator) throws IOException {
-		
-		final String tmpIODir = System.getProperty("java.io.tmpdir");
-		final Path baseDir = Files.createDirectories(Paths.get(tmpIODir, "perfstats_jackpot"));
+	private static File createRawFile(RecordIterator recordIterator) throws IOException {
 
-		final Path dir;
+		var tmpIODir = System.getProperty("java.io.tmpdir");
+		var baseDir = Files.createDirectories(Paths.get(tmpIODir, "perfstats_jackpot"));
+
+		Path dir;
 		{
-			final String processName = ManagementFactory.getRuntimeMXBean().getName();
-			final String timestamp = new SimpleDateFormat("ddMMyyyyHHmmssSSS").format(new Date());
-			final String id = processName + timestamp + uniquifier.incrementAndGet() + Math.random();
+			var processName = ManagementFactory.getRuntimeMXBean().getName();
+			var timestamp = new SimpleDateFormat("ddMMyyyyHHmmssSSS").format(new Date());
+			var id = processName + timestamp + uniquifier.incrementAndGet() + Math.random();
 			dir = Files.createDirectory(new File(baseDir.toFile(), id).toPath());
 
 			// TODO - check for universal uniqueness of the directory.
 			// Read specification of Files.createDirectory
 		}
 
-		final File rawFile = new File(dir.toFile(), "raw.dat");
+		var rawFile = new File(dir.toFile(), "raw.dat");
 
-		try (final FileOutputStream fw = new FileOutputStream(rawFile);
-				BufferedOutputStream bos = new BufferedOutputStream(fw);
-				DataOutputStream dos = new DataOutputStream(bos)) {
+		try (var fw = new FileOutputStream(rawFile);
+			 var bos = new BufferedOutputStream(fw);
+			 var dos = new DataOutputStream(bos)) {
+
 			while (recordIterator.hasNext()) {
 
-				final Record record = recordIterator.next();
+				var record = recordIterator.next();
 
-				final String eventName = record.getEventName();
-				final long timestamp = record.getTimestamp();
-				final double latency = record.getLatency();
+				var eventName = record.getEventName();
+				var timestamp = record.getTimestamp();
+				var latency = record.getLatency();
 
 				dos.writeUTF(eventName);
 				dos.writeLong(timestamp);
@@ -343,24 +343,25 @@ public final class LatencyReportGenerator {
 		return rawFile;
 	}
 
-	private static CharSequence createHtmlColumnHeaderWithLink(final String columnName, final String link) {
+	private static CharSequence createHtmlColumnHeaderWithLink(String columnName, String link) {
 		return "<th>" + createHtmlTextWithLink(columnName, link) + "</th>";
 	}
 
-	private static CharSequence createHtmlTextWithLink(final String text, final String link) {
+	private static CharSequence createHtmlTextWithLink(String text, String link) {
 		return text + "<sup><a href=\"" + link + "\" target=\"_blank\">?</a></sup>";
 	}
 
 	private static final class Stats {
 		
-		static Stats create(final List<TimestampAndLatency> latencyData, final TimeUnit latencyUnit, final TimeZone outputTimeZone, final String eventType) {
-			final int len = latencyData.size();
+		static Stats create(List<TimestampAndLatency> latencyData, TimeUnit latencyUnit, TimeZone outputTimeZone, String eventType) {
 
-			final double[] latencies = new double[len];
-			final long[] timestamps = new long[len];
+			var len = latencyData.size();
 
-			int i = 0;
-			for (final TimestampAndLatency datum : latencyData) {
+			var latencies = new double[len];
+			var timestamps = new long[len];
+
+			var i = 0;
+			for (var datum : latencyData) {
 				latencies[i] = datum.latency;
 				timestamps[i] = datum.timestamp;
 				i++;
@@ -374,7 +375,7 @@ public final class LatencyReportGenerator {
 		// TODO - include volume stats in the report
 		private final VolumeStats volumeStats;
 
-		Stats(final double[] latencies, final TimeUnit latencyUnit, final long[] timestamps, final TimeZone outputTimeZone, final String eventType) {
+		Stats(double[] latencies, TimeUnit latencyUnit, long[] timestamps, TimeZone outputTimeZone, String eventType) {
 			this.latencyStats = LatencyStats.create(latencies, latencyUnit, timestamps, eventType);
 			this.volumeStats = VolumeStats.create(timestamps, outputTimeZone);
 		}
@@ -392,19 +393,19 @@ public final class LatencyReportGenerator {
 		private final int[] hourlyTrxCount;
 		private int totalTrxCount;
 
-		DailyVolumeStats(final Long day) {
+		DailyVolumeStats(Long day) {
 			this.day = day;
 			this.hourlyTrxCount = new int[24]; // hourly volumeStats
 		}
 
-		void add(final long millis) {
+		void add(long millis) {
 			if ((millis < 0) || (millis > MILLIS_IN_A_DAY)) {
 				throw new IllegalArgumentException("" + millis);
 			}
 
-			final int hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
+			var hour = (int) TimeUnit.MILLISECONDS.toHours(millis);
 
-			final int newCount = this.hourlyTrxCount[hour] + 1;
+			var newCount = this.hourlyTrxCount[hour] + 1;
 
 			this.hourlyTrxCount[hour] = newCount;
 
@@ -413,37 +414,37 @@ public final class LatencyReportGenerator {
 
 		@Override
 		public String toString() {
-			
-			final Long day = this.day;
-			final String dayStr = String.format("%1$td %1$tb %1$tY", day);
 
-			final int[] trxCounts = this.hourlyTrxCount;
-			final int totalTrxCount = this.totalTrxCount;
-			final int len = trxCounts.length;
+			var day = this.day;
+			var dayStr = String.format("%1$td %1$tb %1$tY", day);
 
-			int highestTrxCount = Integer.MIN_VALUE;
-			int lowestTrxCount = Integer.MAX_VALUE;
+			var trxCounts = this.hourlyTrxCount;
+			var totalTrxCount = this.totalTrxCount;
+			var len = trxCounts.length;
+
+			var highestTrxCount = Integer.MIN_VALUE;
+			var lowestTrxCount = Integer.MAX_VALUE;
 
 			//noinspection ForLoopReplaceableByForEach
-			for (int hour = 0; hour < len; hour++) {
-				final int trxCount = trxCounts[hour];
+			for (var hour = 0; hour < len; hour++) {
+				var trxCount = trxCounts[hour];
 
 				highestTrxCount = Math.max(trxCount, highestTrxCount);
 				lowestTrxCount = Math.min(trxCount, lowestTrxCount);
 			}
 
-			final int trxCountPadding = String.format("%d", highestTrxCount).length();
+			var trxCountPadding = String.format("%d", highestTrxCount).length();
 
-			final String[] labels = new String[len];
-			final List<Integer> peakHours = new ArrayList<>();
-			final List<Integer> valleyHours = new ArrayList<>();
+			var labels = new String[len];
+			List<Integer> peakHours = new ArrayList<>();
+			List<Integer> valleyHours = new ArrayList<>();
 
-			for (int hour = 0; hour < len; hour++) {
-				
-				final int trxCount = trxCounts[hour];
-				final double perc = (trxCount * 100.0) / totalTrxCount;
+			for (var hour = 0; hour < len; hour++) {
 
-				final Integer hourBoxed = hour;
+				var trxCount = trxCounts[hour];
+				var perc = (trxCount * 100.0) / totalTrxCount;
+
+				Integer hourBoxed = hour;
 
 				labels[hour] = String.format("%1s    %2$02d    %3$" + trxCountPadding + "d    %4$6.2f%%", dayStr, hourBoxed, trxCount, perc);
 
@@ -456,9 +457,9 @@ public final class LatencyReportGenerator {
 				}
 			}
 
-			final String NL = System.lineSeparator();
-			final String BEGIN = " <<";
-			final String END = ">>";
+			var NL = System.lineSeparator();
+			var BEGIN = " <<";
+			var END = ">>";
 
 			return "Volumetric statistics for " + dayStr + BEGIN + NL + 
 					NL + 
@@ -475,26 +476,26 @@ public final class LatencyReportGenerator {
 
 	private static final class VolumeStats {
 		
-		static VolumeStats create(final long[] timestamps, final TimeZone outputTimeZone) {
+		static VolumeStats create(long[] timestamps, TimeZone outputTimeZone) {
 			return new VolumeStats(timestamps, outputTimeZone);
 		}
 
 		private final Map<Long, DailyVolumeStats> data;
 
-		private VolumeStats(final long[] timestamps, final TimeZone outputTimeZone) {
+		private VolumeStats(long[] timestamps, TimeZone outputTimeZone) {
 			this.data = new HashMap<>();
 
-			for (final long ts : timestamps) {
-				add(ts, outputTimeZone);
+			for (var timestamp : timestamps) {
+				add(timestamp, outputTimeZone);
 			}
 		}
 
-		private void add(final long timestamp, final TimeZone outputTimeZone) {
+		private void add(long timestamp, TimeZone outputTimeZone) {
 			
 			//TODO - Utils.getStartOfDay(..) create a new Calendar object per call. Optimization needed.
-			final Long startOfDay = Utils.getStartOfDay(timestamp, outputTimeZone);
+			var startOfDay = Utils.getStartOfDay(timestamp, outputTimeZone);
 
-			DailyVolumeStats stats = this.data.get(startOfDay);
+			var stats = this.data.get(startOfDay);
 
 			if (stats == null) {
 				stats = new DailyVolumeStats(startOfDay);
@@ -506,12 +507,12 @@ public final class LatencyReportGenerator {
 
 		@Override
 		public String toString() {
-			final String NL = System.lineSeparator();
+			var NL = System.lineSeparator();
 
-			final StringBuilder buf = new StringBuilder();
+			var buf = new StringBuilder();
 
-			for (final Entry<Long, DailyVolumeStats> e : this.data.entrySet()) {
-				buf.append(e.getValue()).append(NL).append(NL);
+			for (var entry : this.data.entrySet()) {
+				buf.append(entry.getValue()).append(NL).append(NL);
 			}
 
 			return buf.toString();
@@ -532,29 +533,29 @@ public final class LatencyReportGenerator {
 	 */
 	private static final class LatencyStats {
 		
-		static LatencyStats create(final double[] latencies, final TimeUnit latencyUnit, final long[] timestamps, final String eventType) {
+		static LatencyStats create(double[] latencies, TimeUnit latencyUnit, long[] timestamps, String eventType) {
 			return new LatencyStats(latencies, latencyUnit, timestamps, eventType);
 		}
 
 		// TODO - check correctness
-		private static LatencyStats removeOutliers(final LatencyStats stats, final int outlierThreshold) {
-			
-			final int[] outlierIndices = stats.getZScoreOutliers(outlierThreshold).getIndices();
-			final int outlierCount = outlierIndices.length;
+		private static LatencyStats removeOutliers(LatencyStats stats, int outlierThreshold) {
 
-			final double[] latencies = stats.getLatencies();
-			final long[] timestamps = stats.getTimestamps();
+			var outlierIndices = stats.getZScoreOutliers(outlierThreshold).getIndices();
+			var outlierCount = outlierIndices.length;
 
-			final int maxCount = latencies.length;
-			double[] latenciesWithoutOutliers = new double[maxCount];
-			long[] timestampsWithoutOutliers = new long[maxCount];
-			int count = 0;
-			int k = 0;
+			var latencies = stats.getLatencies();
+			var timestamps = stats.getTimestamps();
 
-			int nextOutlierIndex = (k >= outlierCount) ? Integer.MIN_VALUE : outlierIndices[k];
+			var maxCount = latencies.length;
+			var latenciesWithoutOutliers = new double[maxCount];
+			var timestampsWithoutOutliers = new long[maxCount];
+			var count = 0;
+			var k = 0;
+
+			var nextOutlierIndex = (k >= outlierCount) ? Integer.MIN_VALUE : outlierIndices[k];
 			k++;
 
-			for (int i = 0; i < maxCount; i++) {
+			for (var i = 0; i < maxCount; i++) {
 				if (i == nextOutlierIndex) {
 					nextOutlierIndex = (k >= outlierCount) ? Integer.MIN_VALUE : outlierIndices[k];
 					k++;
@@ -607,43 +608,43 @@ public final class LatencyReportGenerator {
 		private final double[] zscores;
 		private final String eventType;
 
-		private LatencyStats(final double[] latencies, final TimeUnit latencyUnit, final long[] timestamps, final String eventType) {
-			
-			final int n = latencies.length;
+		private LatencyStats(double[] latencies, TimeUnit latencyUnit, long[] timestamps, String eventType) {
 
-			final double sum = Utils.sum(latencies);
-			final double mean = sum / n;
+			var n = latencies.length;
 
-			final double[] minMax = Utils.minMax(latencies);
-			final double min = minMax[0];
-			final double max = minMax[1];
+			var sum = Utils.sum(latencies);
+			var mean = sum / n;
+
+			var minMax = Utils.minMax(latencies);
+			var min = minMax[0];
+			var max = minMax[1];
 
 			double s1 = 0;
 			double s2 = 0;
 			double s3 = 0;
 			
-			for (final double latency : latencies) {
-				
-				final double diff = latency - mean;
+			for (var latency : latencies) {
+
+				var diff = latency - mean;
 
 				s1 += Math.pow(diff, 2);
 				s2 += Math.pow(diff, 3);
 				s3 += Math.pow(diff, 4);
 			}
 
-			final double variance = s1 / n;
-			final double thirdMoment = s2 / n;
-			final double fourthMoment = s3 / n;
+			var variance = s1 / n;
+			var thirdMoment = s2 / n;
+			var fourthMoment = s3 / n;
 
-			final double skewness = thirdMoment / Math.pow(variance, 1.5);
-			final double kurtosis = fourthMoment / Math.pow(variance, 2);
-			final double excessKurtosis = kurtosis - 3;
+			var skewness = thirdMoment / Math.pow(variance, 1.5);
+			var kurtosis = fourthMoment / Math.pow(variance, 2);
+			var excessKurtosis = kurtosis - 3;
 
-			final double stdDeviation = Math.sqrt(s1 / (n - 1));
-			final double[] sorted = Utils.sort(latencies);
-			final double median = Utils.getMedian(sorted);
+			var stdDeviation = Math.sqrt(s1 / (n - 1));
+			var sorted = Utils.sort(latencies);
+			var median = Utils.getMedian(sorted);
 
-			final double[] zscores = Utils.zScores(latencies, mean, stdDeviation);
+			var zscores = Utils.zScores(latencies, mean, stdDeviation);
 
 			this.sampleCount = n;
 			this.latencies = latencies;
@@ -663,25 +664,25 @@ public final class LatencyReportGenerator {
 			this.eventType = eventType;
 		}
 
-		Outliers getZScoreOutliers(final double threshold) {
-			final int[] indices = Utils.getIndicesOfValuesGreaterThan(threshold, this.zscores);
+		Outliers getZScoreOutliers(double threshold) {
+			var indices = Utils.getIndicesOfValuesGreaterThan(threshold, this.zscores);
 			return new Outliers(indices, Utils.getValuesForIndices(indices, this.latencies), Utils.getValuesForIndices(indices, this.zscores));
 		}
 
-		private Histogram<Double> createHistogram(final double[] intervalPoints) {
+		private Histogram<Double> createHistogram(double[] intervalPoints) {
 			return Histogram.create(this.latencies, intervalPoints);
 		}
 
-		private Percentiles getPercentiles(final double[] keys) {
+		private Percentiles getPercentiles(double[] keys) {
 			return Utils.getPercentiles(this.sortedLatencies, keys, Utils.toShortForm(this.latencyUnit));
 		}
 
 		private String getShortSummary() {
-			
-			final String NL = System.lineSeparator();
-			final String IND = "    ";
 
-			final String timeUnit = Utils.toShortForm(this.latencyUnit);
+			var NL = System.lineSeparator();
+			var IND = "    ";
+
+			var timeUnit = Utils.toShortForm(this.latencyUnit);
 
 			return 	IND + "       Event count = " + this.sampleCount + NL + 
 					IND + "            Median = " + toDisplayString(this.median) + ' ' + timeUnit + NL + 
@@ -697,18 +698,18 @@ public final class LatencyReportGenerator {
 
 		private String getShortSummaryHtml() {
 
-			final String NL = System.lineSeparator();
-			final String timeUnit = Utils.toShortForm(this.latencyUnit);
-			
-			final String fontFamily = SVGConstants.SERIF_FONT_FAMILY;
-			final double fontSize = SVGConstants.SERIF_FONT_SIZE;
-			final String columnStyle1 = "style=\"padding: 0px 0px 0px 10px; text-align: right;\"";
-			final String columnStyle2 = "style=\"padding: 0px 0px 0px 30px; text-align: right;\"";
-			final String columnStyle3 = "style=\"padding: 0px 10px 0px 10px; text-align: left;\"";
+			var NL = System.lineSeparator();
+			var timeUnit = Utils.toShortForm(this.latencyUnit);
+
+			var fontFamily = SVGConstants.SERIF_FONT_FAMILY;
+			var fontSize = SVGConstants.SERIF_FONT_SIZE;
+			var columnStyle1 = "style=\"padding: 0px 0px 0px 10px; text-align: right;\"";
+			var columnStyle2 = "style=\"padding: 0px 0px 0px 30px; text-align: right;\"";
+			var columnStyle3 = "style=\"padding: 0px 10px 0px 10px; text-align: left;\"";
 
 			//TODO - create a generic method that creates HTML table and remember to use escape HTML special characters.
-			
-			final String html = 
+
+			var html =
 					"<table style=\"border:1px solid black; font-family: " + fontFamily + "; font-size: " + fontSize + "px;\">" + NL +
 					"	<tr style=\"outline:1px solid black;\">" + NL +
 					"		<th " + columnStyle1 + ">Name</th>" + NL +
@@ -780,13 +781,13 @@ public final class LatencyReportGenerator {
 			return this.eventType;
 		}
 
-		public String toString(final double[] latencyIntervalPoints, final double[] percentileKeys) {
-			
-			final String eventType = this.eventType;
+		public String toString(double[] latencyIntervalPoints, double[] percentileKeys) {
 
-			final String NL = System.lineSeparator();
-			final String BEGIN = " <<";
-			final String END = ">>";
+			var eventType = this.eventType;
+
+			var NL = System.lineSeparator();
+			var BEGIN = " <<";
+			var END = ">>";
 
 			return "Latency summary for " + eventType + BEGIN + NL + 
 					NL + 
@@ -803,44 +804,44 @@ public final class LatencyReportGenerator {
 					END;
 		}
 
-		public String[] toHtml(	final double[] intervalPointsForLatencyHistogram, 
-				final double[] percentileKeys, 
-				final TimeSeriesLatencyDensity density, 
-				final double heatMapSingleAreaWidth, 
-				final ColorRampScheme colorRampScheme) {
+		public String[] toHtml(	double[] intervalPointsForLatencyHistogram,
+				double[] percentileKeys,
+				TimeSeriesLatencyDensity density,
+				double heatMapSingleAreaWidth,
+				ColorRampScheme colorRampScheme) {
 
-			final String eventType = this.eventType;
+			var eventType = this.eventType;
 
-			final HeatMapSVG heatMapSVG = density.getHeatMapSVG(this.latencyUnit, heatMapSingleAreaWidth, colorRampScheme);
-			final String trxCountBarChartSVG = 
+			var heatMapSVG = density.getHeatMapSVG(this.latencyUnit, heatMapSingleAreaWidth, colorRampScheme);
+			var trxCountBarChartSVG =
 					density.getTrxCountBarChartSVG(heatMapSVG.getXAxisLabelSkipCount(), heatMapSVG.getHeatMapBoxStartX(), heatMapSVG.getHeatMapSingleAreaWidth(), colorRampScheme);
 
-			final String NL = System.lineSeparator();
-			final String BR = "<br/>";
+			var NL = System.lineSeparator();
+			var BR = "<br/>";
 
-			final String style = "style=\"font-family:Courier New, Courier, monospace; font-weight:bold;\"";
+			var style = "style=\"font-family:Courier New, Courier, monospace; font-weight:bold;\"";
 
-			final String baseType = "Latency";
+			var baseType = "Latency";
 
-			final String typeA = "summary";
-			final String typeB = "histogram";
-			final String typeC = "percentiles";
-			final String typeD = "heatmap";
+			var typeA = "summary";
+			var typeB = "histogram";
+			var typeC = "percentiles";
+			var typeD = "heatmap";
 
-			final String textA = baseType + " " + typeA + " | " + eventType;
-			final String textB = baseType + " " + typeB + " | " + eventType;
-			final String textC = baseType + " " + typeC + " | " + eventType;
-			final String textD = baseType + " " + typeD + " | " + eventType;
+			var textA = baseType + " " + typeA + " | " + eventType;
+			var textB = baseType + " " + typeB + " | " + eventType;
+			var textC = baseType + " " + typeC + " | " + eventType;
+			var textD = baseType + " " + typeD + " | " + eventType;
 
-			final String linkIdA = LinkGenerator.next("a");
-			final String linkIdB = LinkGenerator.next("b");
-			final String linkIdC = LinkGenerator.next("c");
-			final String linkIdD = LinkGenerator.next("d");
+			var linkIdA = LinkGenerator.next("a");
+			var linkIdB = LinkGenerator.next("b");
+			var linkIdC = LinkGenerator.next("c");
+			var linkIdD = LinkGenerator.next("d");
 
-			final String rowStyle = "style=\"outline:1px solid black;\"";
-			final String columnStyle = "style=\"padding: 8px; text-align: right;\"";
+			var rowStyle = "style=\"outline:1px solid black;\"";
+			var columnStyle = "style=\"padding: 8px; text-align: right;\"";
 
-			final String links = 
+			var links =
 					"<tr " + rowStyle + ">" + NL + 
 					"<td " + columnStyle + ">" + eventType + "</td>" + NL + 
 					"<td " + columnStyle + ">" + this.sampleCount + "</td>" + NL + 
@@ -858,7 +859,7 @@ public final class LatencyReportGenerator {
 					"<td " + columnStyle + ">" + toDisplayString(this.excessKurtosis) + "</td>" + NL + 
 					"</tr>" + NL;
 
-			final String content = 
+			var content =
 					paragraph(linkWithId(textA, linkIdA) + ':', style) + getShortSummaryHtml() + BR + BR +
 					paragraph(linkWithId(textB, linkIdB) + ':', style) + createHistogram(intervalPointsForLatencyHistogram).toSVG(new StripTrailingZeroesAfterDecimalFunction(false), false, colorRampScheme) + BR + BR + 
 					paragraph(linkWithId(textC, linkIdC) + ':', style) + getPercentiles(percentileKeys).toSVG(false) + BR + BR + 
@@ -867,15 +868,15 @@ public final class LatencyReportGenerator {
 			return new String[] { links, content };
 		}
 
-		private static String paragraph(final String paragraphText, final String cssStyle) {
+		private static String paragraph(String paragraphText, String cssStyle) {
 			return "<p " + cssStyle + ">" + paragraphText + "</p>";
 		}
 
-		private static String linkWithId(final String text, final String id) {
+		private static String linkWithId(String text, String id) {
 			return "<a id=\"" + id + "\">" + text + "</a>";
 		}
 
-		private static String linkWithRef(final String text, final String ref) {
+		private static String linkWithRef(String text, String ref) {
 			return "<a href=\"#" + ref + "\">" + text + "</a>";
 		}
 
@@ -883,7 +884,7 @@ public final class LatencyReportGenerator {
 			return this.median;
 		}
 
-		private static String toDisplayString(final double d) {
+		private static String toDisplayString(double d) {
 			return Utils.toDisplayString(d, 3, true);
 		}
 	}
@@ -893,7 +894,7 @@ public final class LatencyReportGenerator {
 		private final double[] data;
 		private final double[] zscores;
 
-		Outliers(final int[] indices, final double[] data, final double[] zscores) {
+		Outliers(int[] indices, double[] data, double[] zscores) {
 			this.indices = indices;
 			this.data = data;
 			this.zscores = zscores;
@@ -905,12 +906,13 @@ public final class LatencyReportGenerator {
 
 		@Override
 		public String toString() {
-			final int n = this.indices.length;
 
-			final StringBuilder b = new StringBuilder();
+			var n = this.indices.length;
+
+			var b = new StringBuilder();
 
 			b.append('[');
-			for (int i = 0; i < n; i++) {
+			for (var i = 0; i < n; i++) {
 				b.append('(').append(this.indices[i]).append(',').append(this.data[i]).append(',').append(this.zscores[i]).append(')');
 				if (i < (n - 1)) {
 					b.append(',');
@@ -925,7 +927,7 @@ public final class LatencyReportGenerator {
 	private static final class LinkGenerator {
 		private static int LINK_COUNTER = 0;
 
-		static String next(final String suffix) {
+		static String next(String suffix) {
 			return "link" + ++LINK_COUNTER + suffix;
 		}
 	}

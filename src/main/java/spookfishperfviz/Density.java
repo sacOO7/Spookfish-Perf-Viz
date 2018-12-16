@@ -32,7 +32,7 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 	
 	static final class IndexedDataPoint<C extends Comparable<C>> implements Comparable<IndexedDataPoint<C>> {
 		
-		static <C extends Comparable<C>> IndexedDataPoint<C> createFinite(final C actualData) {
+		static <C extends Comparable<C>> IndexedDataPoint<C> createFinite(C actualData) {
 			return new IndexedDataPoint<>(DataPoint.createFinite(actualData));
 		}
 
@@ -47,7 +47,7 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 		private final DataPoint<C> dataPoint;
 		private int index;
 
-		private IndexedDataPoint(final DataPoint<C> dataPoint) {
+		private IndexedDataPoint(DataPoint<C> dataPoint) {
 			this.dataPoint = dataPoint;
 		}
 
@@ -55,25 +55,25 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 			return this.index;
 		}
 
-		void setIndex(final int index) {
+		void setIndex(int index) {
 			this.index = index;
 		}
 
 		@Override
-		public int compareTo(final IndexedDataPoint<C> o) {
+		public int compareTo(IndexedDataPoint<C> o) {
 			return this.dataPoint.compareTo(o.dataPoint);
 		}
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
+			var prime = 31;
+			var result = 1;
 			result = (prime * result) + ((this.dataPoint == null) ? 0 : this.dataPoint.hashCode());
 			return result;
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
@@ -83,7 +83,7 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			final IndexedDataPoint<?> other = (IndexedDataPoint<?>) obj;
+			IndexedDataPoint<?> other = (IndexedDataPoint<?>) obj;
 			if (this.dataPoint == null) {
 				return other.dataPoint == null;
 			} else return this.dataPoint.equals(other.dataPoint);
@@ -94,13 +94,13 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 			return toString(null);
 		}
 
-		String toString(final Function<C, String> formatter) {
+		String toString(Function<C, String> formatter) {
 			return this.dataPoint.toString(formatter);
 		}
 	}
 
-	private static <T extends Comparable<T>> NavigableSet<IndexedDataPoint<T>> sortAndIndex(final Set<T> intervalPoints) {
-		final NavigableSet<IndexedDataPoint<T>> points = new TreeSet<>();
+	private static <T extends Comparable<T>> NavigableSet<IndexedDataPoint<T>> sortAndIndex(Set<T> intervalPoints) {
+		NavigableSet<IndexedDataPoint<T>> points = new TreeSet<>();
 
 		for (var iPoint : intervalPoints) {
 			points.add(IndexedDataPoint.createFinite(iPoint));
@@ -109,7 +109,7 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 		points.add(IndexedDataPoint.createNegativeInfinite());
 		points.add(IndexedDataPoint.createPositiveInfinite());
 
-		int index = 0;
+		var index = 0;
 		for (var point : points) {
 			point.setIndex(index++);
 		}
@@ -117,12 +117,12 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 		return points;
 	}
 
-	private static <T extends Comparable<T>> int calculateIndex(final T t, final NavigableSet<IndexedDataPoint<T>> set) {
+	private static <T extends Comparable<T>> int calculateIndex(T t, NavigableSet<IndexedDataPoint<T>> set) {
 		return set.lower(IndexedDataPoint.createFinite(t)).getIndex();
 	}
 
-	static <R extends Comparable<R>, C extends Comparable<C>, V> Density<R, C, V> create(final Set<R> rowIntervalPoints,
-			final Set<C> columnIntervalPoints, final V nullValue, final Class<V> valueType) {
+	static <R extends Comparable<R>, C extends Comparable<C>, V> Density<R, C, V> create(Set<R> rowIntervalPoints,
+																						 Set<C> columnIntervalPoints, V nullValue, Class<V> valueType) {
 		return new Density<>(rowIntervalPoints, columnIntervalPoints, nullValue, valueType);
 	}
 
@@ -131,18 +131,18 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 
 	private final V[][] matrix;
 
-	private Density(final Set<R> rowIntervalPoints, final Set<C> columnIntervalPoints, final V nullValue, final Class<V> valueType) {
-		
-		final NavigableSet<IndexedDataPoint<C>> cip = sortAndIndex(columnIntervalPoints);
-		final NavigableSet<IndexedDataPoint<R>> rip = sortAndIndex(rowIntervalPoints);
+	private Density(Set<R> rowIntervalPoints, Set<C> columnIntervalPoints, V nullValue, Class<V> valueType) {
 
-		final int rowCount = rip.size() - 1;
-		final int colCount = cip.size() - 1;
+		var cip = sortAndIndex(columnIntervalPoints);
+		var rip = sortAndIndex(rowIntervalPoints);
 
-		final V[][] matrix = (V[][]) Array.newInstance(valueType, rowCount, colCount);
+		var rowCount = rip.size() - 1;
+		var colCount = cip.size() - 1;
 
-		for (int r = 0; r < rowCount; r++) {
-			for (int c = 0; c < colCount; c++) {
+		var matrix = (V[][]) Array.newInstance(valueType, rowCount, colCount);
+
+		for (var r = 0; r < rowCount; r++) {
+			for (var c = 0; c < colCount; c++) {
 				matrix[r][c] = nullValue;
 			}
 		}
@@ -153,7 +153,7 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 		this.matrix = matrix;
 	}
 
-	void apply(final R row, final C column, final UnaryOperator<V> operator) {
+	void apply(R row, C column, UnaryOperator<V> operator) {
 		var rowNum = calculateIndex(row, this.rowIntervalPoints);
 		var columnNum = calculateIndex(column, this.columnIntervalPoints);
 
@@ -166,7 +166,7 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 
 		var str = new StringBuilder("Points on X axis=" + this.columnIntervalPoints + NL + "Points on Y axis=" + this.rowIntervalPoints + NL);
 
-		for (final V[] row : this.matrix) {
+		for (var row : this.matrix) {
 			str.append(Arrays.deepToString(row)).append(NL);
 		}
 		return str.toString();

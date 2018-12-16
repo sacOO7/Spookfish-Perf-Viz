@@ -30,7 +30,7 @@ final class HeatMapSVG {
 	// TODO - check if this should be a double
 	private final double heatMapSingleAreaWidth;
 
-	HeatMapSVG(final String svg, final int xAxisLabelSkipCount, final double heatMapBoxStartX, final double heatMapSingleAreaWidth) {
+	HeatMapSVG(String svg, int xAxisLabelSkipCount, double heatMapBoxStartX, double heatMapSingleAreaWidth) {
 		this.svg = svg;
 		this.xAxisLabelSkipCount = xAxisLabelSkipCount;
 		this.heatMapBoxStartX = heatMapBoxStartX;

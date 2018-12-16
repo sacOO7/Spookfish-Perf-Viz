@@ -35,22 +35,22 @@ import java.util.Scanner;
  */
 final class LineScanner implements Iterable<String>, AutoCloseable {
 	
-	private static void makeLineScanner(final Scanner scanner) {
+	private static void makeLineScanner(Scanner scanner) {
 		scanner.useDelimiter("\r\n|[\n\r\u2028\u2029\u0085]");
 	}
 
 	private final Scanner scanner;
 
-	public LineScanner(final String text) {
-		final Scanner s = new Scanner(text);
-		makeLineScanner(s);
-		this.scanner = s;
+	public LineScanner(String text) {
+		var scanner = new Scanner(text);
+		makeLineScanner(scanner);
+		this.scanner = scanner;
 	}
 
-	public LineScanner(final File file) throws FileNotFoundException {
-		final Scanner s = new Scanner(file);
-		makeLineScanner(s);
-		this.scanner = s;
+	public LineScanner(File file) throws FileNotFoundException {
+		var scanner = new Scanner(file);
+		makeLineScanner(scanner);
+		this.scanner = scanner;
 	}
 
 	@Override

@@ -32,19 +32,19 @@ final class HorizontalBarChart {
 		public static final String DEFAULT = UNDERSCORE;
 	}
 	
-	static HorizontalBarChart create(final double[] data, final String[] dataLabels) {
+	static HorizontalBarChart create(double[] data, String[] dataLabels) {
 		return create(data, dataLabels, null);
 	}
 
-	static HorizontalBarChart create(final double[] data, final String[] dataLabels, final String headerLabel) {
+	static HorizontalBarChart create(double[] data, String[] dataLabels, String headerLabel) {
 		return new HorizontalBarChart(data, dataLabels, headerLabel);
 	}
 	
-	static HorizontalBarChart create(final int[] data, final String[] dataLabels) {
+	static HorizontalBarChart create(int[] data, String[] dataLabels) {
 		return create(data, dataLabels, null);
 	}
 
-	static HorizontalBarChart create(final int[] data, final String[] dataLabels, final String headerLabel) {
+	static HorizontalBarChart create(int[] data, String[] dataLabels, String headerLabel) {
 		return create(Utils.toDoubles(data), dataLabels, headerLabel);
 	}
 
@@ -53,7 +53,7 @@ final class HorizontalBarChart {
 	private final double[] data;
 	private final double max;
 
-	private HorizontalBarChart(final double[] data, final String[] dataLabels, final String headerLabel) {
+	private HorizontalBarChart(double[] data, String[] dataLabels, String headerLabel) {
 		
 		this.data = data;
 		this.dataLabels = dataLabels;
@@ -69,90 +69,90 @@ final class HorizontalBarChart {
 	/**
 	 * TODO - include header label if present
 	 */
-	String toString(final long limit, final String mark) {
-		final double[] data = this.data;
-		final int size = data.length;
-		final double max = this.max;
-		final CharSequence[] dataLabels = this.dataLabels;
+	String toString(long limit, String mark) {
+		var data = this.data;
+		var size = data.length;
+		var max = this.max;
+		CharSequence[] dataLabels = this.dataLabels;
 
-		final int maxLabelLength = getMaxLabelLength(dataLabels);
+		var maxLabelLength = getMaxLabelLength(dataLabels);
 
-		final String NL = System.lineSeparator();
+		var NL = System.lineSeparator();
 
-		final StringBuilder buf = new StringBuilder();
+		var result = new StringBuilder();
 
-		for (int i = 0; i < size; i++) {
-			final String dataLabel = Utils.getPaddedLabel(dataLabels[i], maxLabelLength, false);
+		for (var i = 0; i < size; i++) {
+			var dataLabel = Utils.getPaddedLabel(dataLabels[i], maxLabelLength, false);
 
-			buf.append(dataLabel).append("  ");
+			result.append(dataLabel).append("  ");
 
-			final long scaled = scale(limit, max, data[i]);
-			for (int k = 0; k < scaled; k++) {
-				buf.append(mark);
+			var scaled = scale(limit, max, data[i]);
+			for (var k = 0; k < scaled; k++) {
+				result.append(mark);
 			}
 
-			buf.append(NL);
+			result.append(NL);
 		}
 
-		return buf.toString();
+		return result.toString();
 	}
 
-	String toSVG(final boolean wrapInHtmlBody, final ColorRampScheme colorRampScheme) {
+	String toSVG(boolean wrapInHtmlBody, ColorRampScheme colorRampScheme) {
 		return toSVG(DEFAULT_LIMIT_FOR_SVG, wrapInHtmlBody, colorRampScheme);
 	}
 
-	private String toSVG(final int maxLineLength, final boolean wrapInHtmlBody, final ColorRampScheme colorRampScheme) {
+	private String toSVG(int maxLineLength, boolean wrapInHtmlBody, ColorRampScheme colorRampScheme) {
 		return wrapInHtmlBody ? toSVGHtml(maxLineLength, colorRampScheme) : toSVG(maxLineLength, colorRampScheme);
 	}
 
-	private String toSVGHtml(final int maxLineLength, final ColorRampScheme colorRampScheme) {
-		final String NL = System.lineSeparator();
+	private String toSVGHtml(int maxLineLength, ColorRampScheme colorRampScheme) {
+		var NL = System.lineSeparator();
 		return "<!DOCTYPE html>" + NL + "<html>" + NL + "  <body>" + NL + toSVG(maxLineLength, colorRampScheme) + NL + "  </body>" + NL + "</html>";
 	}
 
-	private String toSVG(final int maxLineLength, final ColorRampScheme colorRampScheme) {
-		
-		final double[] data = this.data;
-		final int size = data.length;
-		final double max = this.max;
-		final String[] dataLabels = this.dataLabels;
-		final String headerLabel = this.headerLabel;
-		
-		final boolean hasHeaderLabel = headerLabel != null;
+	private String toSVG(int maxLineLength, ColorRampScheme colorRampScheme) {
 
-		final int SPACE_BETWEEN_LABEL_AND_LINE = 10;
-		final String LABEL_FONT_FAMILY = SVGConstants.MONOSPACE_FONT_FAMILY;
-		final double LABEL_FONT_SIZE = SVGConstants.MONOSPACE_FONT_SIZE;
-		final double LABEL_FONT_WIDTH = SVGConstants.MONOSPACE_FONT_WIDTH;
-		final int LINE_GAP = SVGConstants.LINE_GAP;
-		final int LEFT_RIGHT_MARGIN = SVGConstants.LEFT_RIGHT_MARGIN;
-		final int LABEL_START_X = LEFT_RIGHT_MARGIN;
+		var data = this.data;
+		var size = data.length;
+		var max = this.max;
+		var dataLabels = this.dataLabels;
+		var headerLabel = this.headerLabel;
+
+		var hasHeaderLabel = headerLabel != null;
+
+		var SPACE_BETWEEN_LABEL_AND_LINE = 10;
+		var LABEL_FONT_FAMILY = SVGConstants.MONOSPACE_FONT_FAMILY;
+		var LABEL_FONT_SIZE = SVGConstants.MONOSPACE_FONT_SIZE;
+		var LABEL_FONT_WIDTH = SVGConstants.MONOSPACE_FONT_WIDTH;
+		var LINE_GAP = SVGConstants.LINE_GAP;
+		var LEFT_RIGHT_MARGIN = SVGConstants.LEFT_RIGHT_MARGIN;
+		var LABEL_START_X = LEFT_RIGHT_MARGIN;
+
+		var NL = System.lineSeparator();
+		var INDENT = "    ";
 		
-		final String NL = System.lineSeparator();
-		final String INDENT = "    ";
-		
-		final int maxLabelLength;
+		int maxLabelLength;
 		{
-			final int maxLen = getMaxLabelLength(dataLabels);
+			var maxLen = getMaxLabelLength(dataLabels);
 			maxLabelLength = hasHeaderLabel ? getMaxLabelLength(headerLabel, maxLen) : maxLen;	
 		}
-		
-		final double maxLabelWidth = maxLabelLength * LABEL_FONT_WIDTH;
-		final double xLineStart = LABEL_START_X + maxLabelWidth + SPACE_BETWEEN_LABEL_AND_LINE;
-		final double boxWidth = xLineStart + maxLineLength + LEFT_RIGHT_MARGIN;
 
-		final int boxHeight = (size + 1 + (hasHeaderLabel ? 2 : 0)) * LINE_GAP;
+		var maxLabelWidth = maxLabelLength * LABEL_FONT_WIDTH;
+		var xLineStart = LABEL_START_X + maxLabelWidth + SPACE_BETWEEN_LABEL_AND_LINE;
+		var boxWidth = xLineStart + maxLineLength + LEFT_RIGHT_MARGIN;
 
-		final StringBuilder svgLines = new StringBuilder();
+		var boxHeight = (size + 1 + (hasHeaderLabel ? 2 : 0)) * LINE_GAP;
+
+		var svgLines = new StringBuilder();
 		svgLines.append("<g style=\"stroke:grey; stroke-width:5\">").append(NL);
 
-		final StringBuilder svgLabels = new StringBuilder();
+		var svgLabels = new StringBuilder();
 		
 		svgLabels
 			.append("<g fill=\"black\" style=\"font-family:").append(LABEL_FONT_FAMILY)
 			.append(";font-size:").append(LABEL_FONT_SIZE).append("px;\">").append(NL);
 
-		int y1 = LINE_GAP;
+		var y1 = LINE_GAP;
 
 		
 		if (hasHeaderLabel) {
@@ -180,22 +180,22 @@ final class HorizontalBarChart {
 			}
 		}
 
-		final String[] colors = colorRampScheme == null ? null : ColorRampCalculator.getColorMap(data, colorRampScheme);
+		var colors = colorRampScheme == null ? null : ColorRampCalculator.getColorMap(data, colorRampScheme);
 
-		for (int i = 0; i < size; i++, y1 += LINE_GAP) {
-			
-			final double d = data[i];
+		for (var i = 0; i < size; i++, y1 += LINE_GAP) {
 
-			final long scaledLineLength = scale(maxLineLength, max, d);
-			final String dataLabel = Utils.getPaddedLabel(dataLabels[i], maxLabelLength, true); 
+			var d = data[i];
+
+			var scaledLineLength = scale(maxLineLength, max, d);
+			var dataLabel = Utils.getPaddedLabel(dataLabels[i], maxLabelLength, true);
 																						
 			svgLines.append(INDENT)
 					.append("<line x1=\"").append(xLineStart).append("\"")
 					.append(" y1=\"").append(y1).append("\"")
 					.append(" x2=\"").append(xLineStart + scaledLineLength).append("\"")
 					.append(" y2=\"").append(y1).append("\"");
-			
-			final String lineColor = colors == null ? null : colors[i];
+
+			var lineColor = colors == null ? null : colors[i];
 			if (lineColor != null) {
 				svgLines.append(" style=\"stroke:").append(lineColor).append("\"");
 			}
@@ -212,9 +212,9 @@ final class HorizontalBarChart {
 		svgLines.append("</g>");
 		svgLabels.append("</g>");
 
-		final String rect = "<rect width=\"" + boxWidth + "\" height=\"" + boxHeight + "\" style=\"fill:white;stroke:black;stroke-width:1\"/>" + NL;
+		var rect = "<rect width=\"" + boxWidth + "\" height=\"" + boxHeight + "\" style=\"fill:white;stroke:black;stroke-width:1\"/>" + NL;
 
-		final String svg = 
+		var svg =
 				"  <svg width=\"" + boxWidth + "\" height=\"" + boxHeight + "\">" + NL + 
 				INDENT + rect + NL + 
 				svgLines + NL + 
@@ -224,20 +224,20 @@ final class HorizontalBarChart {
 		return svg;
 	}
 
-	private static long scale(final long limit, final double maxData, final double data) {
+	private static long scale(long limit, double maxData, double data) {
 		return Math.round(Math.ceil((data * limit) / maxData));
 	}
 
-	private static int getMaxLabelLength(final CharSequence[] c) {
-		int padding = -1;
-		for (final CharSequence e : c) {
-			padding = getMaxLabelLength(e, padding);
+	private static int getMaxLabelLength(CharSequence[] charSequences) {
+		var padding = -1;
+		for (var charSequence : charSequences) {
+			padding = getMaxLabelLength(charSequence, padding);
 		}
 		return padding;
 	}
 
-	private static int getMaxLabelLength(final CharSequence cs, int currentLength) {
-		final int len = cs == null ? 4 : cs.length();
+	private static int getMaxLabelLength(CharSequence cs, int currentLength) {
+		var len = cs == null ? 4 : cs.length();
 		return Math.max(currentLength, len);
 	}
 }

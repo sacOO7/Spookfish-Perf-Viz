@@ -26,7 +26,7 @@ final class TimestampAndLatency {
 	final long timestamp;
 	final double latency;
 
-	TimestampAndLatency(final long timestamp, final double latency) {
+	TimestampAndLatency(long timestamp, double latency) {
 		this.timestamp = timestamp;
 		this.latency = latency;
 	}

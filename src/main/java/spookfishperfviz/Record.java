@@ -32,7 +32,7 @@ public final class Record {
 	
 	private final double latency;
 
-	public Record(final String eventName, final long timestamp, final double latency) {
+	public Record(String eventName, long timestamp, double latency) {
 		this.eventName = eventName;
 		this.timestamp = timestamp;
 		this.latency = latency;

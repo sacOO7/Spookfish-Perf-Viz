@@ -32,7 +32,7 @@ final class CharSeqLengthFunction implements Function<CharSequence, Integer> {
 	}
 
 	@Override
-	public Integer apply(final CharSequence s) {
+	public Integer apply(CharSequence s) {
 		return s.length();
 	}
 

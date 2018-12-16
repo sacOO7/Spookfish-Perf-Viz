@@ -27,12 +27,12 @@ final class StripTrailingZeroesAfterDecimalFunction implements Function<Double, 
 	
 	private final boolean useGrouping;
 
-	StripTrailingZeroesAfterDecimalFunction(final boolean useGrouping) {
+	StripTrailingZeroesAfterDecimalFunction(boolean useGrouping) {
 		this.useGrouping = useGrouping;
 	}
 
 	@Override
-	public String apply(final Double d) {
+	public String apply(Double d) {
 		return Utils.stripTrailingZeroesAfterDecimal(d, this.useGrouping);
 	}
 

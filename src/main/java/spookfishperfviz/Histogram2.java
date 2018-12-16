@@ -19,7 +19,6 @@ package spookfishperfviz;
 
 import java.util.Collection;
 import java.util.HashSet;
-import java.util.Iterator;
 import java.util.Map.Entry;
 import java.util.Objects;
 import java.util.Set;
@@ -38,41 +37,41 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 	
 	private final SortedMap<Interval<C>, Integer> histogram;
 
-	static Histogram2<Double> newInstance(final double[] data, final double[] intervalPoints, final boolean ignoreEmptyIntervals) {
+	static Histogram2<Double> newInstance(double[] data, double[] intervalPoints, boolean ignoreEmptyIntervals) {
 		return newInstance(Utils.asList(data), intervalPoints, ignoreEmptyIntervals);
 	}
 
-	static Histogram2<Double> newInstance(final double[] data, final int nIntervalPoints, final boolean ignoreEmptyIntervals) {
+	static Histogram2<Double> newInstance(double[] data, int nIntervalPoints, boolean ignoreEmptyIntervals) {
 		return newInstance(Utils.asList(data), nIntervalPoints, ignoreEmptyIntervals);
 	}
 
-	static Histogram2<Double> newInstance(final Collection<Double> data, final int nIntervalPoints, final boolean ignoreEmptyIntervals) {
+	static Histogram2<Double> newInstance(Collection<Double> data, int nIntervalPoints, boolean ignoreEmptyIntervals) {
 		return newInstance(data, Utils.createIntervalPoints(data, nIntervalPoints), ignoreEmptyIntervals);
 	}
 
-	static Histogram2<Double> newInstance(final Collection<Double> data, final double[] intervalPoints, final boolean ignoreEmptyIntervals) {
+	static Histogram2<Double> newInstance(Collection<Double> data, double[] intervalPoints, boolean ignoreEmptyIntervals) {
 		return new Histogram2<>(data, Utils.toHashSet(intervalPoints), ignoreEmptyIntervals);
 	}
 
-	static <T extends Comparable<T>> Histogram2<T> newInstance(final Collection<T> data, final Set<T> intervalPoints,
-			final boolean ignoreEmptyIntervals) {
+	static <T extends Comparable<T>> Histogram2<T> newInstance(Collection<T> data, Set<T> intervalPoints,
+															   boolean ignoreEmptyIntervals) {
 		return new Histogram2<>(data, intervalPoints, ignoreEmptyIntervals);
 	}
 
-	private Histogram2(final Collection<C> data, final Set<C> intervalPoints, final boolean ignoreEmptyIntervals) {
+	private Histogram2(Collection<C> data, Set<C> intervalPoints, boolean ignoreEmptyIntervals) {
 		
-		final Set<Interval<C>> intervals = new HashSet<>();
-		boolean loop = true;
+		Set<Interval<C>> intervals = new HashSet<>();
+		var loop = true;
 		
-		final Iterator<C> itr = new TreeSet<>(intervalPoints).iterator();
+		var iterator = new TreeSet<>(intervalPoints).iterator();
 		
 		DataPoint<C> low = DataPoint.createNegativeInfinite();
 		
 		do {
 			DataPoint<C> high;
 
-			if (itr.hasNext()) {
-				high = DataPoint.createFinite(itr.next());
+			if (iterator.hasNext()) {
+				high = DataPoint.createFinite(iterator.next());
 			} else {
 				high = DataPoint.createPositiveInfinite();
 				loop = false;
@@ -84,17 +83,17 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 			
 		} while (loop);
 
-		final SortedMap<Interval<C>, Integer> hist = new TreeMap<>();
+		SortedMap<Interval<C>, Integer> hist = new TreeMap<>();
 
 		if (!ignoreEmptyIntervals) {
-			final Integer ZERO = 0;
-			for (final Interval<C> interval : intervals) {
+			Integer ZERO = 0;
+			for (var interval : intervals) {
 				hist.put(interval, ZERO);
 			}
 		}
 
-		for (final C datum : data) {
-			for (final Interval<C> interval : intervals) {
+		for (var datum : data) {
+			for (var interval : intervals) {
 				if (interval.contains(DataPoint.createFinite(datum))) {
 					hist.put(interval, hist.containsKey(interval) ? Integer.valueOf(hist.get(interval) + 1) : Integer.valueOf(1));
 					break;
@@ -111,29 +110,29 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 	}
 
 	@Override
-	String toString(final Function<C, String> dataPointFormatter, final int maxHeight, final String mark) {
+	String toString(Function<C, String> dataPointFormatter, int maxHeight, String mark) {
 		return toBarChart(dataPointFormatter).toString(maxHeight, mark);
 	}
 
 	@Override
-	String toSVG(final Function<C, String> dataPointFormatter, final boolean wrapInHtmlBody, final ColorRampScheme colorRampScheme) {
+	String toSVG(Function<C, String> dataPointFormatter, boolean wrapInHtmlBody, ColorRampScheme colorRampScheme) {
 		return toBarChart(dataPointFormatter).toSVG(wrapInHtmlBody, colorRampScheme);
 	}
 
-	private HorizontalBarChart toBarChart(final Function<C, String> dataPointFormatter) {
-		final int size = this.histogram.size();
-		final Entry<Interval<C>, Integer>[] entries = this.histogram.entrySet().toArray(new Entry[size]);
+	private HorizontalBarChart toBarChart(Function<C, String> dataPointFormatter) {
+		var size = this.histogram.size();
+		Entry<Interval<C>, Integer>[] entries = this.histogram.entrySet().toArray(new Entry[size]);
 
-		final LabelMaker<C> labelMaker = new LabelMaker<>(entries, dataPointFormatter);
-		final int[] data = new int[size];
-		final String[] labels = new String[size];
+		var labelMaker = new LabelMaker<>(entries, dataPointFormatter);
+		var data = new int[size];
+		var labels = new String[size];
 
-		for (int k = 0; k < size; k++) {
+		for (var k = 0; k < size; k++) {
 			data[k] = entries[k].getValue();
 			labels[k] = labelMaker.getDataLabel(k);
 		}
-		
-		final String headerLabel = labelMaker.getHeaderLabel();
+
+		var headerLabel = labelMaker.getHeaderLabel();
 
 		return HorizontalBarChart.create(data, labels, headerLabel);
 	}
@@ -142,7 +141,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 		private final DataPoint<C> low;
 		private final DataPoint<C> high;
 
-		Interval(final DataPoint<C> low, final DataPoint<C> high) {
+		Interval(DataPoint<C> low, DataPoint<C> high) {
 			
 			Objects.requireNonNull(low);
 			Objects.requireNonNull(high);
@@ -155,14 +154,14 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 			this.high = high;
 		}
 
-		boolean contains(final DataPoint<C> val) {
+		boolean contains(DataPoint<C> val) {
 			Objects.requireNonNull(val);
 
 			return (val.compareTo(this.low) >= 0) && (val.compareTo(this.high) < 0);
 		}
 
 		@Override
-		public int compareTo(final Interval<C> other) {
+		public int compareTo(Interval<C> other) {
 			if (this.equals(other)) {
 				return 0;
 			}
@@ -180,15 +179,15 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 
 		@Override
 		public int hashCode() {
-			final int prime = 31;
-			int result = 1;
+			var prime = 31;
+			var result = 1;
 			result = (prime * result) + ((this.high == null) ? 0 : this.high.hashCode());
 			result = (prime * result) + ((this.low == null) ? 0 : this.low.hashCode());
 			return result;
 		}
 
 		@Override
-		public boolean equals(final Object obj) {
+		public boolean equals(Object obj) {
 			if (this == obj) {
 				return true;
 			}
@@ -198,7 +197,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 			if (getClass() != obj.getClass()) {
 				return false;
 			}
-			final Interval<?> other = (Interval<?>) obj;
+			Interval<?> other = (Interval<?>) obj;
 			if (this.high == null) {
 				if (other.high != null) {
 					return false;
@@ -216,7 +215,7 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 			return toString(null);
 		}
 
-		String toString(final Function<C, String> dataPointFormatter) {
+		String toString(Function<C, String> dataPointFormatter) {
 			return "[" + this.low.toString(dataPointFormatter) + ',' + this.high.toString(dataPointFormatter) + "]";
 		}
 	}
@@ -237,14 +236,14 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 		private final String labelStringFormat;
 		private final String headerLabel;
 
-		LabelMaker(final Entry<Interval<C>, Integer>[] entries, final Function<C, String> dataPointFormatter) {
+		LabelMaker(Entry<Interval<C>, Integer>[] entries, Function<C, String> dataPointFormatter) {
 			
 			long sumOfFrequencies = 0;
 			int iPadding = -1, fPadding = -1;
 
-			for (final Entry<Interval<C>, Integer> row : entries) {
-				final Interval<C> interval = row.getKey();
-				final Integer frequency = row.getValue();
+			for (var row : entries) {
+				var interval = row.getKey();
+				var frequency = row.getValue();
 
 				sumOfFrequencies += frequency;
 				iPadding = Math.max(iPadding, interval.toString(dataPointFormatter).length());
@@ -253,21 +252,21 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 
 			iPadding = Math.max(iPadding, INTERVAL_HEADER.length());
 			fPadding = Math.max(fPadding, FREQUENCY_HEADER.length());
-			
-			final int pPadding = Math.max(7 /*xxx.xx%*/, PERCENTAGE_HEADER.length());
-			final int cPadding = Math.max(7 /*xxx.xx%*/, CUMULATIVE_PERCENTAGE_HEADER.length());
 
-			final int size = entries.length;
+			var pPadding = Math.max(7 /*xxx.xx%*/, PERCENTAGE_HEADER.length());
+			var cPadding = Math.max(7 /*xxx.xx%*/, CUMULATIVE_PERCENTAGE_HEADER.length());
 
-			final double[] p = new double[size];
-			final double[] c = new double[size];
+			var size = entries.length;
+
+			var p = new double[size];
+			var c = new double[size];
 
 			double cumulative = 0;
 
-			for (int i = 0; i < size; i++) {
-				final int frequency = entries[i].getValue();
+			for (var i = 0; i < size; i++) {
+				int frequency = entries[i].getValue();
 
-				final double perc = (frequency * 100.0) / sumOfFrequencies;
+				var perc = (frequency * 100.0) / sumOfFrequencies;
 				cumulative += perc;
 
 				p[i] = perc;
@@ -296,14 +295,14 @@ final class Histogram2<C extends Comparable<C>> extends Histogram<C> {
 												CUMULATIVE_PERCENTAGE_HEADER);
 		}
 
-		String getDataLabel(final int index) {
-			
-			final Entry<Interval<C>, Integer> row = this.table[index];
-			final Interval<C> interval = row.getKey();
-			final Integer frequency = row.getValue();
+		String getDataLabel(int index) {
 
-			final double perc = this.percs[index];
-			final double cumulative = this.cumulatives[index];
+			var row = this.table[index];
+			var interval = row.getKey();
+			var frequency = row.getValue();
+
+			var perc = this.percs[index];
+			var cumulative = this.cumulatives[index];
 
 			return String.format(this.labelStringFormat, 
 					interval.toString(this.dataPointFormatter), 

@@ -23,15 +23,15 @@ package spookfishperfviz;
  */
 final class VerticalBarChart {
 	
-	static VerticalBarChart create(final double[] data, final String[] labels) {
+	static VerticalBarChart create(double[] data, String[] labels) {
 		return new VerticalBarChart(data, labels);
 	}
 
-	static VerticalBarChart create(final long[] data, final String[] labels) {
+	static VerticalBarChart create(long[] data, String[] labels) {
 		return create(Utils.toDoubles(data), labels);
 	}
 
-	static VerticalBarChart create(final int[] data, final String[] labels) {
+	static VerticalBarChart create(int[] data, String[] labels) {
 		return create(Utils.toDoubles(data), labels);
 	}
 
@@ -39,62 +39,62 @@ final class VerticalBarChart {
 	private final double[] data;
 	private final double max;
 
-	private VerticalBarChart(final double[] data, final String[] labels) {
+	private VerticalBarChart(double[] data, String[] labels) {
 		this.data = data;
 		this.labels = labels;
 		this.max = Utils.getMax(data);
 	}
 
-	String toSVG(	final int maxBarLength, 
-					final double barWidth, 
-					final double boxStartX, 
-					final String labelFontFamily, 
-					final double labelFontSize, 
-					final int labelSkipCount, 
-					final ColorRampScheme colorRampScheme) {
+	String toSVG(	int maxBarLength,
+					double barWidth,
+					double boxStartX,
+					String labelFontFamily,
+					double labelFontSize,
+					int labelSkipCount,
+					ColorRampScheme colorRampScheme) {
 		
-		final double[] data = this.data;
-		final int size = data.length;
-		final double max = this.max;
-		final String[] labels = this.labels;
+		var data = this.data;
+		var size = data.length;
+		var max = this.max;
+		var labels = this.labels;
 
-		final String NL = System.lineSeparator();
+		var NL = System.lineSeparator();
 
-		final int START_Y = SVGConstants.TOP_DOWN_MARGIN;
+		var START_Y = SVGConstants.TOP_DOWN_MARGIN;
 
-		final double barChartStartX = boxStartX + /* gutter */barWidth;
+		var barChartStartX = boxStartX + /* gutter */barWidth;
 
-		final int SPACE_BETWEEN_LABEL_AND_BAR = 10;
+		var SPACE_BETWEEN_LABEL_AND_BAR = 10;
 
-		final double barStartY = START_Y + maxBarLength;
-		final double labelStartY = barStartY + SPACE_BETWEEN_LABEL_AND_BAR;
+		double barStartY = START_Y + maxBarLength;
+		var labelStartY = barStartY + SPACE_BETWEEN_LABEL_AND_BAR;
 
-		final double boxWidth = (size + 1) * barWidth;
+		var boxWidth = (size + 1) * barWidth;
 
-		final String indent1 = "  ";
-		final String indent2 = "    ";
+		var indent1 = "  ";
+		var indent2 = "    ";
 
-		final String[] colors = colorRampScheme == null ? null : ColorRampCalculator.getColorMap(data, colorRampScheme);
+		var colors = colorRampScheme == null ? null : ColorRampCalculator.getColorMap(data, colorRampScheme);
 
-		final StringBuilder svgBars = new StringBuilder();
+		var svgBars = new StringBuilder();
 		svgBars.append("<g style=\"stroke:grey; stroke-width:").append(barWidth).append("\">").append(NL);
 
-		final StringBuilder svgLabels = new StringBuilder();
+		var svgLabels = new StringBuilder();
 		svgLabels.append("<g fill=\"black\" style=\"font-family:").append(labelFontFamily).append(";font-size:").append(labelFontSize).append("px;\">").append(NL);
 
-		int maxXAxisLabelPartCount = Integer.MIN_VALUE;
-		double x = barChartStartX;
+		var maxXAxisLabelPartCount = Integer.MIN_VALUE;
+		var x = barChartStartX;
 
-		for (int i = 0; i < size; i++, x += barWidth) {
-			final double d = data[i];
-			final long scaledBarLength = scale(maxBarLength, max, d);
+		for (var i = 0; i < size; i++, x += barWidth) {
+			var d = data[i];
+			var scaledBarLength = scale(maxBarLength, max, d);
 			svgBars.append(indent2);
 			svgBars.append("<line x1=\"").append(x).append("\"");
 			svgBars.append(" y1=\"").append(barStartY).append("\"");
 			svgBars.append(" x2=\"").append(x).append("\"");
 			svgBars.append(" y2=\"").append(barStartY - scaledBarLength).append("\"");
 
-			final String lineColor = colors == null ? null : colors[i];
+			var lineColor = colors == null ? null : colors[i];
 			if (lineColor != null) {
 				svgBars.append(" style=\"stroke:").append(lineColor).append("\"");
 			}
@@ -105,12 +105,12 @@ final class VerticalBarChart {
 			svgBars.append("</line>");
 			svgBars.append(NL);
 
-			final boolean skipLabel = Utils.skipLabel(i, size, labelSkipCount);
+			var skipLabel = Utils.skipLabel(i, size, labelSkipCount);
 			if (!skipLabel) {
 
-				final String label = Utils.escapeHTMLSpecialChars(labels[i]);
+				var label = Utils.escapeHTMLSpecialChars(labels[i]);
 
-				final MultiSpanSVGText multiSpanSVGText = Utils.createMultiSpanSVGText(label, x, labelStartY, labelFontSize, null);
+				var multiSpanSVGText = Utils.createMultiSpanSVGText(label, x, labelStartY, labelFontSize, null);
 
 				svgLabels.append(multiSpanSVGText.getSvg()).append(NL);
 
@@ -121,19 +121,19 @@ final class VerticalBarChart {
 		svgBars.append("</g>");
 		svgLabels.append("</g>");
 
-		final double boxHeight = labelStartY + (maxXAxisLabelPartCount * labelFontSize) + SVGConstants.TOP_DOWN_MARGIN;
+		var boxHeight = labelStartY + (maxXAxisLabelPartCount * labelFontSize) + SVGConstants.TOP_DOWN_MARGIN;
 
-		final String rect = "<rect x=\"" + boxStartX + "\" width=\"" + boxWidth + "\" height=\"" + boxHeight + "\" style=\"fill:white;stroke:black;stroke-width:1\"/>" + NL;
+		var rect = "<rect x=\"" + boxStartX + "\" width=\"" + boxWidth + "\" height=\"" + boxHeight + "\" style=\"fill:white;stroke:black;stroke-width:1\"/>" + NL;
 
-		final double svgEndX = boxStartX + boxWidth;
+		var svgEndX = boxStartX + boxWidth;
 
-		final String svg = indent1 + "<svg width=\"" + svgEndX + "\" height=\"" + boxHeight + "\">" + NL + indent2 + rect + NL + svgBars + NL
+		var svg = indent1 + "<svg width=\"" + svgEndX + "\" height=\"" + boxHeight + "\">" + NL + indent2 + rect + NL + svgBars + NL
 				+ svgLabels + NL + indent1 + "</svg>";
 
 		return svg;
 	}
 
-	private static long scale(final long limit, final double maxData, final double data) {
+	private static long scale(long limit, double maxData, double data) {
 		return Math.round(Math.ceil((data * limit) / maxData));
 	}
 }
