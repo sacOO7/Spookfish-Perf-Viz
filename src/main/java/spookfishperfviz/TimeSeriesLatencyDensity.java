@@ -57,7 +57,7 @@ final class TimeSeriesLatencyDensity {
 
 	private static final UnaryOperator<Long> LONG_INC_OPERATOR = l -> l == null ? Long.valueOf(0) : Long.valueOf(l + 1);
 
-	private static final Function<IndexedDataPoint<Double>, String> Y_AXIS_LABEL_MAKER = i -> i.toString(new StripTrailingZeroesAfterDecimalFunction(true));
+	private static final Function<IndexedDataPoint<Double>, String> Y_AXIS_LABEL_MAKER = i -> i.toString(d -> Utils.stripTrailingZeroesAfterDecimal(d, true));
 
 	private static final class TimestampLabelMaker implements Function<Long, String> {
 
