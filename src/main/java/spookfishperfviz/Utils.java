@@ -666,7 +666,7 @@ final class Utils {
 				throw new IllegalArgumentException("Internal error: Illegal type <" + type + ">");
 			}
 
-			return (T) value;
+			return type.cast(value);
 
 		} catch (final Exception e) {
 
