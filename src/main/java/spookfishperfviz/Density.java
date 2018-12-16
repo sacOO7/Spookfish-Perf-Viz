@@ -23,6 +23,7 @@ import java.util.NavigableSet;
 import java.util.Set;
 import java.util.TreeSet;
 import java.util.function.Function;
+import java.util.function.UnaryOperator;
 
 /**
  * @author Rahul Bakale
