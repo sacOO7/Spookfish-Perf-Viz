@@ -18,12 +18,13 @@
 package spookfishperfviz;
 
 import java.util.ArrayList;
+import java.util.function.Supplier;
 
 /**
  * @author Rahul Bakale
  * @since Nov, 2014
  */
-final class ArrayListSupplier<T> implements Supplier<java.util.ArrayList<T>> {
+final class ArrayListSupplier<T> implements Supplier<ArrayList<T>> {
 
 	@Override
 	public ArrayList<T> get() {
