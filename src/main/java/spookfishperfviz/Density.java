@@ -105,8 +105,8 @@ final class Density<R extends Comparable<R>, C extends Comparable<C>, V> {
 			points.add(IndexedDataPoint.createFinite(iPoint));
 		}
 
-		points.add(IndexedDataPoint.<T> createNegativeInfinite());
-		points.add(IndexedDataPoint.<T> createPositiveInfinite());
+		points.add(IndexedDataPoint.createNegativeInfinite());
+		points.add(IndexedDataPoint.createPositiveInfinite());
 
 		int index = 0;
 		for (final IndexedDataPoint<T> p : points) {

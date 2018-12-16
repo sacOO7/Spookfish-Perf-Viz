@@ -34,7 +34,7 @@ final class Optional<T> {
 	}
 
 	static <T> Optional<T> of(final T value) {
-		return value == null ? Optional.<T> empty() : new Optional<>(value);
+		return value == null ? Optional.empty() : new Optional<>(value);
 	}
 
 	private final T value;
