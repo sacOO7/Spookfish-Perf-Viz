@@ -298,13 +298,9 @@ public final class LatencyReportGenerator {
 									final double latency, 
 									final Map<String, List<TimestampAndLatency>> data) {
 
-		List<TimestampAndLatency> list = data.get(eventType);
-		if (list == null) {
-			list = new ArrayList<>();
-			data.put(eventType, list);
-		}
-
-		list.add(new TimestampAndLatency(timestamp, latency));
+		data
+				.computeIfAbsent(eventType, key -> new ArrayList<>())
+				.add(new TimestampAndLatency(timestamp, latency));
 	}
 
 	private static File createRawFile(final RecordIterator recordIterator) throws IOException {
