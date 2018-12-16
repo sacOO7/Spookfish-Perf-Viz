@@ -17,9 +17,6 @@
 
 package spookfishperfviz;
 
-import static java.math.BigDecimal.ONE;
-import static java.math.BigDecimal.TEN;
-
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,13 +33,15 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
-import java.util.Scanner;
 import java.util.Set;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+
+import static java.math.BigDecimal.ONE;
+import static java.math.BigDecimal.TEN;
 
 /**
  * @author Rahul Bakale
@@ -55,35 +54,32 @@ final class Utils {
 	}
 
 	static String toSvgText(String text) {
+
 		var NL = System.lineSeparator();
 		var lineSpace = SVGConstants.LINE_GAP;
 
 		var texts = new StringBuilder();
 
-		var maxLineLength = Integer.MIN_VALUE;
 		var height = lineSpace;
 
-		try (var s = new Scanner(text)) {
+		var rawLines = text.lines().collect(Collectors.toList());
 
-			s.useDelimiter("\r\n|[\n\r\u2028\u2029\u0085]");
+		for (var rawLine : rawLines) {
 
-			while (s.hasNext()) {
+			var line = rawLine.replace(" ", "&nbsp;");
 
-				var rawLine = s.next();
+			texts.append("<text x=\"").append(10).append("\" y=\"").append(height).append("\">").append(line).append("</text>").append(NL);
 
-				var rawLineLength = rawLine.length();
-				if (rawLineLength > maxLineLength) {
-					maxLineLength = rawLineLength;
-				}
-
-				var line = rawLine.replace(" ", "&nbsp;");
-
-				texts.append("<text x=\"").append(10).append("\" y=\"").append(height).append("\">").append(line).append("</text>").append(NL);
-
-				height += lineSpace;
-			}
+			height += lineSpace;
 		}
 
+		var maxLineLength =
+				rawLines
+						.stream()
+						.mapToInt(line -> line.length())
+						.max()
+						.getAsInt();
+		
 		var width = (SVGConstants.LEFT_RIGHT_MARGIN * 2) + (maxLineLength * SVGConstants.MONOSPACE_FONT_WIDTH);
 
 		var buf =
@@ -93,6 +89,7 @@ final class Utils {
 				texts +
 				"</g>" + NL +
 				"</svg>";
+
 		return buf;
 	}
 
