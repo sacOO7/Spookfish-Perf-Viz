@@ -19,6 +19,7 @@ package spookfishperfviz;
 
 import java.util.Collection;
 import java.util.Set;
+import java.util.function.Function;
 
 /**
  * @author Rahul Bakale

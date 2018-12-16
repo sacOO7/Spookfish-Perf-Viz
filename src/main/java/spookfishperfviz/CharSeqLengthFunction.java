@@ -17,6 +17,8 @@
 
 package spookfishperfviz;
 
+import java.util.function.Function;
+
 /**
  * @author Rahul Bakale
  * @since Nov, 2014
