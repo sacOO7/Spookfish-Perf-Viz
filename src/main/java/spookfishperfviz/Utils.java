@@ -76,7 +76,7 @@ final class Utils {
 		var maxLineLength =
 				rawLines
 						.stream()
-						.mapToInt(line -> line.length())
+						.mapToInt(String::length)
 						.max()
 						.getAsInt();
 		
@@ -99,6 +99,7 @@ final class Utils {
 	}
 
 	static <T, C extends List<T>> C reverse(Collection<T> c, Supplier<C> s) {
+
 		var ret = s.get();
 		ret.addAll(c);
 		Collections.reverse(ret);
