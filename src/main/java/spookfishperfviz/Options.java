@@ -19,6 +19,7 @@ package spookfishperfviz;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 
 /**
  * @author Rahul Bakale
@@ -100,7 +101,7 @@ final class Options {
 	<T> T getOptional(final String optionName, final Class<T> valueType, final T defaultValue) throws BadOptionsException {
 
 		final Optional<String> optional = this.options.get(optionName);
-		return (optional != null && optional.hasValue()) ? parse(optionName, optional.get(), valueType) : defaultValue;
+		return (optional != null && optional.isPresent()) ? parse(optionName, optional.get(), valueType) : defaultValue;
 	}
 
 	private String getMandatory(final String optionName) throws BadOptionsException {
@@ -111,10 +112,6 @@ final class Options {
 			throw BadOptionsException.optionNotSpecified(optionName);
 		}
 
-		if (!optional.hasValue()) {
-			throw BadOptionsException.illegalValue(optionName, "Value is null.", null);
-		}
-
-		return optional.get();
+		return optional.orElseThrow(() -> BadOptionsException.illegalValue(optionName, "Value is null.", null));
 	}
 }
