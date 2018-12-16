@@ -42,6 +42,7 @@ import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.Supplier;
+import java.util.stream.Collectors;
 
 /**
  * @author Rahul Bakale
@@ -108,13 +109,8 @@ final class Utils {
 	}
 
 	static <T, R, C extends Collection<R>> C forEach(Collection<T> c, Function<? super T, R> f, Supplier<C> s) {
-		var ret = s.get();
 
-		for (var e : c) {
-			ret.add(f.apply(e));
-		}
-
-		return ret;
+		return c.stream().map(f::apply).collect(Collectors.toCollection(s));
 	}
 
 	static <T, C extends List<T>> C reverse(Collection<T> c, Supplier<C> s) {
@@ -128,7 +124,7 @@ final class Utils {
 	// TODO - use this in BarChart
 	static <C extends Collection<String>> C getPaddedLabels(Collection<? extends CharSequence> labels, Supplier<C> s, boolean escapeHTMLSpecialChars) {
 		
-		int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, new ArrayListSupplier<>()));
+		int maxLabelLength = Collections.max(forEach(labels, CharSeqLengthFunction.INSTANCE, () -> new ArrayList<>()));
 		return getPaddedLabels(labels, maxLabelLength, s, escapeHTMLSpecialChars);
 	}
 
