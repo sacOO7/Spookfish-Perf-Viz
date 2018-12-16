@@ -298,7 +298,7 @@ final class TimeSeriesLatencyDensity {
 				forEach(reverse(density.getRowIntervalPoints(), ArrayList::new), Y_AXIS_LABEL_MAKER, ArrayList::new);
 		
 		int yAxisMaxLabelLength =
-				Collections.max(forEach(yAxisLabels, CharSeqLengthFunction.INSTANCE, () -> new ArrayList<>()));
+				Collections.max(forEach(yAxisLabels, String::length, () -> new ArrayList<>()));
 		
 		var yAxisPaddedLabels =
 				Utils.getPaddedLabels(yAxisLabels, yAxisMaxLabelLength, ArrayList::new, true);
