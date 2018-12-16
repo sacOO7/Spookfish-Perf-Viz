@@ -594,7 +594,7 @@ final class TimeSeriesLatencyDensity {
 			labels.add(columnIntervalPoint.toString(timestampLabelMaker));
 		}
 
-		final VerticalBarChart barChart = VerticalBarChart.create(columnTotals, labels.toArray(EMPTY_STRING_ARRAY);
+		final VerticalBarChart barChart = VerticalBarChart.create(columnTotals, labels.toArray(EMPTY_STRING_ARRAY));
 
 		return barChart.toSVG(MAX_BAR_LENGTH, barWidth, boxStartX, X_AXIS_LABEL_FONT_FAMILY, X_AXIS_LABEL_FONT_SIZE, labelSkipCount, colorRampScheme);
 	}
