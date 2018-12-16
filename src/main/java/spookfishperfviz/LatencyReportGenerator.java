@@ -587,21 +587,21 @@ public final class LatencyReportGenerator {
 		/**
 		 * Pearson's moment coefficient of skewness.
 		 * 
-		 * @see http://en.wikipedia.org/wiki/Skewness#Pearson.27s_moment_coefficient_of_skewness
-		 * @see http://www.tc3.edu/instruct/sbrown/stat/shape.htm#SkewnessCompute
+		 * @see <a href="http://en.wikipedia.org/wiki/Skewness#Pearson.27s_moment_coefficient_of_skewness">Skewness, Pearson's moment coefficient of skewness</a>
+		 * @see <a href="http://www.tc3.edu/instruct/sbrown/stat/shape.htm#SkewnessCompute">Skewness</a>
 		 */
 		private final double skewness;
 
 		/**
 		 * Pearson's moment coefficient of kurtosis.
 		 * 
-		 * @see http://en.wikipedia.org/wiki/Kurtosis#Pearson_moments
-		 * @see http://www.tc3.edu/instruct/sbrown/stat/shape.htm#KurtosisCompute
+		 * @see <a href="http://en.wikipedia.org/wiki/Kurtosis#Pearson_moments">Kurtosis, Pearson moments</a>
+		 * @see <a href="http://www.tc3.edu/instruct/sbrown/stat/shape.htm#KurtosisCompute">Kurtosis</a>
 		 */
 		private final double kurtosis;
 
 		/**
-		 * @see http://en.wikipedia.org/wiki/Kurtosis#Pearson_moments
+		 * @see <a href="http://en.wikipedia.org/wiki/Kurtosis#Pearson_moments">Kurtosis, Pearson moments</a>
 		 */
 		private final double excessKurtosis;
 

@@ -35,7 +35,7 @@ import java.util.function.UnaryOperator;
 import spookfishperfviz.Density.IndexedDataPoint;
 
 /**
- * @see http://www.brendangregg.com/HeatMaps/latency.html
+ * @see <a href="http://www.brendangregg.com/HeatMaps/latency.html">Latency Heat Maps</a>
  * 
  * @author Rahul Bakale
  * @since Nov, 2014

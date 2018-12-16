@@ -504,7 +504,7 @@ final class Utils {
 	 * TODO - test with various data samples TODO - verify mathematical
 	 * precision
 	 * 
-	 * @see http://stackoverflow.com/questions/326679/choosing-an-attractive-linear-scale-for-a-graphs-y-axis
+	 * @see <a href="http://stackoverflow.com/questions/326679/choosing-an-attractive-linear-scale-for-a-graphs-y-axis">Choosing an attractive linear scale for a graph's Y Axis</a>
 	 */
 	static double[] createIntervalPoints(double min, double max, int nIntervalPoints) {
 
