@@ -110,7 +110,13 @@ final class Utils {
 	// TODO - use this in BarChart
 	static <C extends Collection<String>> C getPaddedLabels(Collection<? extends CharSequence> labels, Supplier<C> s, boolean escapeHTMLSpecialChars) {
 		
-		int maxLabelLength = Collections.max(forEach(labels, CharSequence::length, () -> new ArrayList<>()));
+		int maxLabelLength =
+				labels
+						.stream()
+						.mapToInt(CharSequence::length)
+						.max()
+						.orElseThrow(() -> new IllegalArgumentException("No labels"));
+
 		return getPaddedLabels(labels, maxLabelLength, s, escapeHTMLSpecialChars);
 	}
 
@@ -311,9 +317,6 @@ final class Utils {
 	/**
 	 * Slightly modified form of what is described here ->
 	 * http://www.stanford.edu/class/archive/anthsci/anthsci192/anthsci192.1064/handouts/calculating%20percentiles.pdf
-	 * 
-	 * @throws IllegalArgumentException
-	 *             if percentile can not be calculated for <code>p</code>
 	 */
 	static double getPthPercentile(double[] sortedData, double p) {
 		var n = sortedData.length;
