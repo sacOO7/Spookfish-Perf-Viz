@@ -23,9 +23,14 @@
 	<groupId>spookfishperfviz</groupId>
 	<artifactId>SpookfishPerfViz</artifactId>
 	<version>0.1.0</version>
+	<packaging>pom</packaging>
 	<name>Spookfish Perf Viz</name>
-
 	<description>Performance Visualization Tools</description>
+
+	<modules>
+		<module>api</module>
+		<module>impl</module>
+	</modules>
 
 	<licenses>
 		<license>
@@ -60,133 +65,31 @@
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	</properties>
-	
-	<dependencies>
-		<dependency>
-			<groupId>junit</groupId>
-			<artifactId>junit</artifactId>
-			<version>4.12</version>
-		</dependency>
-	</dependencies>
 
 	<build>
-		<resources>
-			<resource>
-				<directory>${project.basedir}</directory>
-				<includes>
-					<include>LICENSE</include>
-				</includes>
-			</resource>
-		</resources>
-	
-		<plugins>
-			<plugin>
-				<artifactId>maven-compiler-plugin</artifactId>
-				<version>3.8.0</version>
-				<configuration>
-					<release>11</release>
-					<excludes>
-						<exclude>spookfishperfviz/WorkInProgress*.java</exclude>
-					</excludes>
-				</configuration>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-javadoc-plugin</artifactId>
-				<version>2.9.1</version>
-				<configuration>
-					<excludes>
-						<exclude>spookfishperfviz/WorkInProgress*.java</exclude>
-					</excludes>
-					<archive>
-						<manifestEntries>
-							<Created-By>${java.version} (${java.vendor})</Created-By>
-							<Built-By>Apache Maven ${maven.version}</Built-By>
-							<Build-Jdk>${java.version} (${java.vendor})</Build-Jdk>
-						</manifestEntries>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-javadocs</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<archive>
-								<manifest>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								</manifest>
-							</archive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-				<artifactId>maven-source-plugin</artifactId>
-				<version>2.4</version>
-				<configuration>
-					<excludes>
-						<exclude>spookfishperfviz/WorkInProgress*.java</exclude>
-					</excludes>
-					<archive>
-						<manifestEntries>
-							<Created-By>${java.version} (${java.vendor})</Created-By>
-							<Built-By>Apache Maven ${maven.version}</Built-By>
-							<Build-Jdk>${java.version} (${java.vendor})</Build-Jdk>
-						</manifestEntries>
-					</archive>
-				</configuration>
-				<executions>
-					<execution>
-						<id>attach-sources</id>
-						<goals>
-							<goal>jar</goal>
-						</goals>
-						<configuration>
-							<archive>
-								<manifest>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								</manifest>
-							</archive>
-						</configuration>
-					</execution>
-				</executions>
-			</plugin>
-			<plugin>
-				<groupId>org.apache.maven.plugins</groupId>
-        		<artifactId>maven-jar-plugin</artifactId>
-        		<version>2.4</version>
-        		<configuration>
-					<archive>
-						<manifestEntries>
-							<Created-By>${java.version} (${java.vendor})</Created-By>
-							<Built-By>Apache Maven ${maven.version}</Built-By>
-							<Build-Jdk>${java.version} (${java.vendor})</Build-Jdk>
-						</manifestEntries>
-					</archive>
-				</configuration>
-        		<executions>
-          			<execution>
-            			<id>default-jar</id>
-            			<phase>package</phase>
-            			<goals>
-              				<goal>jar</goal>
-            			</goals>
-            			<configuration>
-            				<archive>
-								<manifestEntries>
-									<Main-Class>spookfishperfviz.Main</Main-Class>
-								</manifestEntries>
-								<manifest>
-									<addDefaultImplementationEntries>true</addDefaultImplementationEntries>
-								</manifest>
-							</archive>
-            			</configuration>
-          			</execution>
-        		</executions>
-      		</plugin>
-		</plugins>
+		<pluginManagement>
+			<plugins>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.0</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-javadoc-plugin</artifactId>
+					<version>2.9.1</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-source-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-jar-plugin</artifactId>
+					<version>2.4</version>
+				</plugin>
+			</plugins>
+		</pluginManagement>
 	</build>
 </project>

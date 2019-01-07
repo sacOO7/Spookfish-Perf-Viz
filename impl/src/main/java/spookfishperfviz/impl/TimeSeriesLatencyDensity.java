@@ -15,10 +15,10 @@
 
  */
 
-package spookfishperfviz;
+package spookfishperfviz.impl;
 
-import static spookfishperfviz.Utils.forEach;
-import static spookfishperfviz.Utils.reverse;
+import static spookfishperfviz.impl.Utils.forEach;
+import static spookfishperfviz.impl.Utils.reverse;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -32,7 +32,7 @@ import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.function.UnaryOperator;
 
-import spookfishperfviz.Density.IndexedDataPoint;
+import spookfishperfviz.impl.Density.IndexedDataPoint;
 
 /**
  * @see <a href="http://www.brendangregg.com/HeatMaps/latency.html">Latency Heat Maps</a>

@@ -15,7 +15,7 @@
 
  */
 
-package spookfishperfviz;
+package spookfishperfviz.impl;
 
 import java.io.BufferedWriter;
 import java.io.FileWriter;
